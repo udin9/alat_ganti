@@ -102,7 +102,7 @@ function setupRequestModalListeners() {
         modal.classList.add('show');
         document.body.style.overflow = 'hidden';
         form.reset();
-        document.getElementById('requestModalTitle').textContent = '➕ Tambah Permohonan';
+        document.getElementById('requestModalTitle').textContent = '➕ 1Tambah Permohonan'; // <!-- permohonan alat ganti (user) form dalam burger permohonan -->
         delete form.dataset.editingId;
     });
 
@@ -486,7 +486,7 @@ function setupUsageModalListeners() {
         saveDataToStorage();
         displayUsage();
         updateDashboard();
-        showNotification('✓ Penggunaan direkod.', 'success');
+        showNotification('✓ 1 Penggunaan direkod.', 'success');
         closeUsageModal();
     });
 
