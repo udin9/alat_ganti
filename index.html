@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alat Ganti Komputer</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1>🖥️ Dashboard Alat Ganti Komputer</h1>
+                <p class="subtitle">Sistem Permohonan Alat Ganti Komputer</p>
+            </div>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="navbar">
+            <div class="nav-inner">
+                <button class="burger-btn" aria-label="Toggle menu">☰</button>
+                <ul class="nav-menu">
+                    <li><a href="#dashboard" class="nav-link active">Dashboard</a></li>
+                    <li><a href="#requests" class="nav-link">Permohonan</a></li>
+                    <li><a href="#inventory" class="nav-link">SenaraiKomputer</a></li>
+                    <li><a href="#add-item" class="nav-link">Tambah Item</a></li>
+                    <li><a href="#reports" class="nav-link">Laporan</a></li>
+                    <li><a href="#usage" class="nav-link">usage</a></li>
+                    <li><a href="#budget" class="nav-link">budget</a></li>
+                </ul>
+                <!-- Burger list inside nav-inner for proper positioning -->
+                <ul class="burger-list" id="burgerList" aria-hidden="true">  
+                    <li><a href="#dashboard" class="burger-link">Dashboard</a></li>
+                    <li><a href="#requests" class="burger-link">Permohonan</a></li>
+                    <li><a href="#equipment-list" class="burger-link">Permohonan Alat Ganti</a></li>
+                    <li><a href="#inventory" class="burger-link">Senarai Komputer</a></li>
+                    <li><a href="#reports" class="burger-link">Laporan</a></li>
+                    <li><a href="#usage" class="burger-link">usage</a></li>
+                    <li><a href="#budget" class="burger-link">budget</a></li>
+                </ul>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Dashboard Section -->
+            <section id="dashboard" class="section">
+                <h2>Dashboard</h2>
+                <!-- Ringkasan Statistik -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: #8e44ad;">📝</div>
+                        <div class="stat-content">
+                            <h3>Permohonan Baru</h3>
+                            <p class="stat-value" id="reqNew">0</p>
+                            <span class="stat-label">Menunggu tindakan</span>
+                        </div>
+                </div>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: #3498db;">⚙️</div>
+                        <div class="stat-content">
+                            <h3>Dalam Proses</h3>
+                            <p class="stat-value" id="reqInProgress">0</p>
+                            <span class="stat-label">Sedang diproses</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: #2ecc71;">✅</div>
+                        <div class="stat-content">
+                            <h3>Selesai</h3>
+                            <p class="stat-value" id="reqDone">0</p>
+                            <span class="stat-label">Telah selesai</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: #e3ac7c;">❌</div>
+                        <div class="stat-content">
+                            <h3>Ditolak</h3>
+                            <p class="stat-value" id="reqRejected">0</p>
+                            <span class="stat-label">Permohonan ditolak</span>
+                        </div>
+                    </div>
+                </div> <!-- End statistik ringkasan -->
+
+                <h2>ALAT GANTI</h2> 
+                <!-- statistik Alat Ganti -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: #3498db;">📦</div>
+                        <div class="stat-content">
+                            <h3>Jumlah Asal Alat Ganti</h3>
+                            <p class="stat-value" id="totalItems">0</p>
+                            <span class="stat-label">Peralatan Sedia Ada</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: #2ecc71;">✓</div>
+                        <div class="stat-content">
+                            <h3>Jumlah Digunakan</h3>
+                            <p class="stat-value" id="availableItems">0</p>
+                            <span class="stat-label">Telah Digunakan</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: #f39c12;">⚠️</div>
+                        <div class="stat-content">
+                            <h3>Jumlah Baki</h3>
+                            <p class="stat-value" id="lowStockItems">0</p>
+                            <span class="stat-label">Jumlah baki keseluruhan Item</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: #e74c3c;">🗑️</div>
+                        <div class="stat-content">
+                            <h3>Rusak/Diperbaiki</h3>
+                            <p class="stat-value" id="damageItems">0</p>
+                            <span class="stat-label">Sedang diperbaiki</span>
+                        </div>
+                    </div>                </div>
+            </section>
+
+            <!-- Permohonan Section tiada nampak ? di dashboard ini senarai alat ganti -->
+            <section id="requests" class="section">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+                    <div>
+                        <h2>📨 Permohonan Alat Ganti</h2>
+                        <p style="color:#7f8c8d;margin-bottom:0;">Senarai permohonan daripada user. Admin boleh tambah / edit / padam.</p>
+                    </div>
+                    <button class="btn btn-primary" id="openRequestForm">➕ Tambah Permohonan</button>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="inventory-table" id="requestsTable">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Pengguna</th>
+                                <th>Item Diminta</th>
+                                <th>Kuantiti</th>
+                                <th>Status</th>
+                                <th>Tarikh</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="requestsTableBody">
+                            <tr class="empty-row"><td colspan="7" class="text-center">Belum ada permohonan.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Modal Form Permohonan -->
+            <div id="requestModal" class="modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2 id="requestModalTitle">➕ Tambah Permohonan</h2>
+                        <button class="modal-close" id="closeRequestModal">&times;</button>
+                    </div>
+                    <form id="addRequestForm" class="form-container">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="reqRequester">Nama Pengguna</label>
+                                <input type="text" id="reqRequester" required placeholder="Nama pengguna">
+                            </div>
+                            <div class="form-group">
+                                <label for="reqItem">Item Diminta</label>
+                                <input type="text" id="reqItem" required placeholder="Nama item">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="reqQty">Kuantiti</label>
+                                <input type="number" id="reqQty" min="1" value="1" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="reqStatus">Status</label>
+                                <select id="reqStatus">
+                                    <option value="Baru">Baru</option>
+                                    <option value="Dalam Proses">Dalam Proses</option>
+                                    <option value="Selesai">Selesai</option>
+                                    <option value="Ditolak">Ditolak</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="reqNotes">Catatan</label>
+                            <textarea id="reqNotes" rows="3" placeholder="Catatan (opsional)"></textarea>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" id="cancelRequestBtn">Batal</button>
+                            <button type="submit" class="btn btn-primary">💾 Simpan Permohonan</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Equipment List Section -->
+            <section id="equipment-list" class="section">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+                    <div>
+                        <h2>📦 Permohonan Alat Ganti</h2>
+                        <p style="color: #7f8c8d; margin-bottom: 0;">Senarai item alat Ganti.</p>
+                    </div>
+                    <button class="btn btn-primary" id="openAddEquipmentForm">➕ Tambah senarai Baru</button>
+                </div>
+                
+                <div class="table-responsive">
+                    <table class="equipment-table" id="equipmentTable">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Model Komputer</th>
+                                <th>Alat Ganti Dipohon</th>
+                                <th>Kuantiti Dipohon</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="equipmentTableBody">
+                            <tr class="empty-row">
+                                <td colspan="7" class="text-center">Belum ada data peralatan. Tambahkan peralatan baru untuk memulai.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div style="margin-top:15px; display:flex; gap:10px; align-items:center;">
+                    <input type="file" id="importEquipmentFile" accept=".csv,.xlsx" />
+                    <button class="btn btn-secondary" id="importEquipmentBtn">📤 Import (CSV/XLSX)</button>
+                    <small style="color:#7f8c8d;">Format: Kategori,Nama Peralatan,Model,Kuantiti,Ikon,Catatan/Keterangan</small>
+                </div>
+            </section>
+
+            <!-- Modal Form Tambah Peralatan -->
+            <div id="equipmentModal" class="modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2 id="modalTitle">➕ Tambah Peralatan Baru</h2>
+                        <button class="modal-close" id="closeModalBtn">&times;</button>
+                    </div>
+                    <form id="addEquipmentForm" class="form-container">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="equipmentCategory">Kategori <span class="required">*</span></label>
+                                <input type="text" id="equipmentCategory" list="categoryList" required placeholder="Ketik atau pilih kategori...">
+                                <datalist id="categoryList">
+                                    <option value="Desktop">Desktop</option>
+                                    <option value="Laptop">Laptop</option>
+                                    <option value="Alat Pakai Habis">Alat Pakai Habis</option>
+                                </datalist>
+                            </div>
+                            <div class="form-group">
+                                <label for="equipmentName">Nama Peralatan <span class="required">*</span></label>
+                                <input type="text" id="equipmentName" required placeholder="Contoh: Motherboard">
+                            </div>
+                            <div class="form-group">
+                                <label for="equipmentModel">Model</label>
+                                <input type="text" id="equipmentModel" placeholder="Contoh: 860 EVO">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="equipmentQuantity">Kuantiti</label>
+                                <input type="number" id="equipmentQuantity" min="1" value="1">
+                            </div>
+                            <div class="form-group">
+                                <label for="equipmentIcon">Ikon</label>
+                                <input type="text" id="equipmentIcon" placeholder="Contoh: 📦">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="equipmentNotes">Catatan/Keterangan</label>
+                                <textarea id="equipmentNotes" rows="3" placeholder="Catatan tambahan tentang peralatan ini"></textarea>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-primary">💾 Simpan Peralatan</button>
+                            <button type="button" class="btn btn-secondary" id="cancelModalBtn">Batal</button>                            
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Add Item delete Section //IVENTORI .. Form-->
+            <section id="add-item" class="section">
+                <h2>Tambah Item Baru</h2>
+                <form class="form-container" id="addItemForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                             <label for="category">Kategori</label>
+                            <input type="text" id="category" list="categoryListAdd" required placeholder="Ketik atau pilih kategori...">
+                            <datalist id="categoryListAdd">
+                                <option value="Desktop">Desktop</option>
+                                <option value="Laptop">Laptop</option>
+                            </datalist>
+                        </div>
+                         <div class="form-group">
+                            <label for="itemName">Jenama Dan Model</label>
+                            <input type="text" id="itemName" required placeholder="Contoh: Dell Optiplex 9020">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                    </div>
+                    <button type="submit" class="btn btn-primary">➕ Tambah Item</button>
+                    <button type="button" class="btn btn-secondary" id="cancelModalBtn">Batal</button>
+                </form>
+            </section>
+
+
+            <!-- Inventory Section -->
+            <section id="inventory" class="section">
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                    <h2 style="margin:0">Senarai Komputer</h2>
+                    <button class="btn btn-primary" id="openAddItemBtn">➕ Tambah Komputer</button>
+                </div>
+                <div class="filter-controls">
+                    <input type="text" id="searchBox" placeholder="🔍 Cari perangkat..." class="search-input">
+                    <select id="categoryFilter" class="filter-select">
+                        <option value="Desktop">Desktop</option>
+                        <option value="Laptop">Laptop</option>
+                    </select>
+                    <select id="conditionFilter" class="filter-select">
+                        <option value="">Semua Kondisi</option>
+                        <option value="Baru">Baru</option>
+                        <option value="Baik">Baik</option>
+                        <option value="Rusak">Rusak/Diperbaiki</option>
+                    </select>
+                </div>
+                <div class="table-responsive">
+                    <table class="inventory-table" id="inventoryTable">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Nama Perangkat</th>
+                                <th>Kategori</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="inventoryTableBody">
+                            <tr class="empty-row">
+                                <td colspan="8" class="text-center">Belum ada data. Tambahkan item baru untuk memulai.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Penggunaan Item Section -->
+            <section id="usage" class="section">
+                <h2>Penggunaan Item</h2>
+                <p style="color:#7f8c8d;">Lihat jumlah sebenar digunakan bagi setiap item dan rekod penggunaan.</p>
+                <div class="table-responsive">
+                    <table class="inventory-table" id="usageTable">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Nama Item</th>
+                                <th>Total Stok</th>
+                                <th>Telah Digunakan</th>
+                                <th>Baki</th>
+                                <th>Peratusan</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usageTableBody">
+                            <tr class="empty-row"><td colspan="7" class="text-center">Tiada data inventori.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Modal Rekod Penggunaan -->
+            <div id="usageModal" class="modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2 id="usageModalTitle">Rekod Penggunaan</h2> <!--Butang Rekod Penggunaan dalam Usage-->
+                        <button class="modal-close" id="closeUsageModal">&times;</button>
+                    </div>
+                    <form id="usageForm" class="form-container">
+                        <div class="form-group">
+                            <label for="usageItemName">Item</label>
+                            <input type="text" id="usageItemName" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="usageQty">Kuantiti Digunakan</label>
+                            <input type="number" id="usageQty" min="1" value="1" required>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" id="cancelUsageBtn">Batal</button>
+                            <button type="submit" class="btn btn-primary">Simpan Rekod</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Bajet RM Section -->
+            <section id="budget" class="section">
+                <h2>Bajet (RM)</h2>
+                <div style="display:flex;gap:20px;align-items:center;flex-wrap:wrap;margin-bottom:15px;">
+                    <div>
+                        <label for="budgetAmount">Jumlah Bajet (RM)</label>
+                        <input type="number" id="budgetAmount" min="0" step="0.01" placeholder="Contoh: 10000">
+                        <button class="btn btn-primary" id="setBudgetBtn">Set Bajet</button>
+                    </div>
+                    <div>
+                        <label for="expenseAmount">Rekod Perbelanjaan (RM)</label>
+                        <input type="number" id="expenseAmount" min="0" step="0.01" placeholder="Jumlah perbelanjaan">
+                        <button class="btn btn-secondary" id="recordExpenseBtn">Rekod Perbelanjaan</button>
+                    </div>
+                </div>
+                <div class="reports-grid">
+                    <div class="report-card">
+                        <h3>Ringkasan Bajet</h3>
+                        <p>Jumlah Bajet: <strong id="budgetTotal">RM 0.00</strong></p>
+                        <p>Telah Digunakan: <strong id="budgetUsed">RM 0.00</strong></p>
+                        <p>Baki: <strong id="budgetRemaining">RM 0.00</strong></p>
+                        <p>Peratus Digunakan: <strong id="budgetPercent">0%</strong></p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Reports Section -->
+            <section id="reports" class="section">
+                <h2>Laporan Inventori</h2>
+                <div class="reports-grid">
+                    <div class="report-card">
+                        <h3>📊 Distribusi Kategori</h3>
+                        <div id="categoryChart" class="chart-placeholder">Grafik akan ditampilkan di sini</div>
+                    </div>
+                    <div class="report-card">
+                        <h3>📈 Status Kondisi</h3>
+                        <div id="conditionChart" class="chart-placeholder">Grafik akan ditampilkan di sini</div>
+                    </div>
+                </div>
+                <div class="export-section">
+                    <h3>Ekspor Data</h3>
+                    <button class="btn btn-secondary" id="exportBtn">📥 Ekspor ke CSV</button>
+                    <button class="btn btn-secondary" id="printBtn">🖨️ Cetak Laporan</button>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>&copy; 2025 Dashboard Alat Ganti Komputer | Sistem Pengurusan Iventori</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+    <!-- SheetJS for .xlsx import -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+</body>
+</html>
