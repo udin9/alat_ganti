@@ -46,7 +46,7 @@
         <main class="main-content">
             <!-- Dashboard Section -->
             <section id="dashboard" class="section">
-                <h2>Dashboard</h2>
+                <h2>Dashboard Permohonan User</h2> <!-- Dashboard yang Connected ke Form Permohonan ---->
                 <!-- Ringkasan Statistik -->
                 <div class="stats-grid">
                     <div class="stat-card">
@@ -129,22 +129,27 @@
                     </div>
                     <button class="btn btn-primary" id="openRequestForm">➕ Tambah Permohonan</button>
                 </div>
-
                 <div class="table-responsive">
                     <table class="inventory-table" id="requestsTable">
                         <thead>
                             <tr>
                                 <th>#</th>
-                                <th>Pengguna</th>
-                                <th>Item Diminta</th>
-                                <th>Kuantiti</th>
-                                <th>Status</th>
-                                <th>Tarikh</th>
-                                <th>Aksi</th>
+                                <th>Nama Pengadu</th>
+                                <th>Model Komputer</th> <!--Cth : Desktop / Laptop-->
+                                <th>Jenama Komputer</th> <!--Cth : Dell Optiplex 9020-->
+                                <th>No Siri</th>
+                                <th>Item Diminta</th> <!--Cth : Motherboard-->
+                                <th>No Siri Alat Ganti</th>
+                                <th>Status</th> <!--Auto : Baru-->
+                                <th>Nama Juruteknik</th>
+                                <th>Catatan</th>
+                                <th>Tarikh Memohon</th>
+                                <th>Tarikh Selesai</th>
+                                <th>Tindakan</th>
                             </tr>
                         </thead>
                         <tbody id="requestsTableBody">
-                            <tr class="empty-row"><td colspan="7" class="text-center">Belum ada permohonan.</td></tr>
+                            <tr class="empty-row"><td colspan="10" class="text-center">Belum ada permohonan.</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -160,20 +165,32 @@
                     <form id="addRequestForm" class="form-container">
                         <div class="form-row">
                             <div class="form-group">
-                                <label for="reqRequester">Nama Pengguna</label>
-                                <input type="text" id="reqRequester" required placeholder="Nama pengguna">
+                                <label for="reqRequester">Nama Pengadu</label> <!--// reqRequester gantikan kepada reqCUst-->
+                                <input type="text" id="reqRequester" required placeholder="Nama pengadu"> <!-- nama pengadu-->
                             </div>
                             <div class="form-group">
-                                <label for="reqItem">Item Diminta</label>
-                                <input type="text" id="reqItem" required placeholder="Nama item">
+                                <label for="reqModel">Model Komputer</label> <!--// letakkan reqModel Model Komputer-->
+                                <input type="text" id="reqModel" placeholder="Desktop/Laptop/Bahan Pakai Habis">
+                            </div>
+                            <div class="form-group">
+                                <label for="reqJenama">Jenama Komputer</label> <!--// reqJenama-->
+                                <input type="text" id="reqJenama" placeholder="Jenama Komputer/Alat Pakai Habis">
+                            </div>
+                            <div class="form-group">
+                                <label for="reqNoSiri">No Siri Komputer</label> <!--// reqNoSiri-->
+                                <input type="text" id="reqNoSiri" placeholder="Masukkan Nombor Siri Komputer">
+                            </div>
+                            <div class="form-group">
+                                <label for="reqRequestItem">Alat Ganti Dipohon</label> <!--reqItem change to reqRequestItem-->
+                                <input type="text" id="reqRequestItem" required placeholder="Alat Ganti Dipohon">
+                            </div>
+                            <div class="form-group">
+                                <label for="reqSiriGanti">No Siri Alat Ganti</label> <!--// reqNoSiri-->
+                                <input type="text" id="reqSiriGanti" placeholder="Masukkan No Siri Alat Ganti">
                             </div>
                         </div>
                         <div class="form-row">
-                            <div class="form-group">
-                                <label for="reqQty">Kuantiti</label>
-                                <input type="number" id="reqQty" min="1" value="1" required>
-                            </div>
-                            <div class="form-group">
+                            <div class="form-group" hidden="true">
                                 <label for="reqStatus">Status</label>
                                 <select id="reqStatus">
                                     <option value="Baru">Baru</option>
@@ -181,6 +198,14 @@
                                     <option value="Selesai">Selesai</option>
                                     <option value="Ditolak">Ditolak</option>
                                 </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="reqJuruteknik">Nama Juruteknik</label> <!--// reqNoSiri-->
+                                <input type="text" id="reqJuruteknik" placeholder="Juruteknik yang bertanggungjawab">
+                            </div>
+                            <div class="form-group">
+                                <label for="reqDateEnd">Tarikh Selesai</label> <!--// reqDateEnd-muncul selesai butang selesai dipilih auto update date-->
+                                <input type="text" id="reqDateEnd" placeholder="Selesai">
                             </div>
                         </div>
                         <div class="form-group">
@@ -194,6 +219,7 @@
                     </form>
                 </div>
             </div>
+            
 
             <!-- Equipment List Section -->
             <section id="equipment-list" class="section">

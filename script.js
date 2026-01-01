@@ -317,12 +317,16 @@ function updateCategoryFilters() {
 // -----------------------
 // Requests (Permohonan)
 // -----------------------
-function addRequest({ requester, itemRequested, quantity = 1, status = 'Baru' }) {
+function addRequest({ requester, itemRequested, status = 'Baru' }) {
     const newReq = {
         id: requestIdCounter++,
         requester: requester || 'Unknown',
         itemRequested: itemRequested || '-',
-        quantity: quantity,
+        model: model,
+        jenama: jenama,
+        nosiri: nosiri,
+        nosiriganti: nosiriganti,
+        notes: notes,
         status: status,
         date: new Date().toLocaleDateString('id-ID')
     };
@@ -339,22 +343,32 @@ function handleAddRequest(e) {
     const form = document.getElementById('addRequestForm');
     const editingId = form.dataset.editingId ? parseInt(form.dataset.editingId) : null;
     const requester = document.getElementById('reqRequester').value.trim();
-    const itemRequested = document.getElementById('reqItem').value.trim();
-    const quantity = parseInt(document.getElementById('reqQty').value) || 1;
+    const model = document.getElementById('reqModel').value.trim();
+    const jenama = document.getElementById('reqJenama').value.trim();
+    const nosiri = document.getElementById('reqNoSiri').value.trim();
+    const itemRequested = document.getElementById('reqRequestItem').value.trim();
+    const nosiriganti = document.getElementById('reqSiriGanti').value.trim();
+    const status = document.getElementById('reqStatus').value.trim();
     const notes = document.getElementById('reqNotes').value.trim();
+    const dateend = document.getElementById('reqDateEnd').value.trim();
+    const juruteknik = document.getElementById('reqJuruteknik').value.trim();
 
     if (editingId) {
         const idx = requests.findIndex(r => r.id === editingId);
         if (idx > -1) {
-            requests[idx] = { ...requests[idx], requester, itemRequested, quantity, status, notes };
-            showNotification('✓ Permohonan diubah.', 'success');
+            requests[idx] = { ...requests[idx], requester, model, jenama, nosiri, itemRequested, nosiriganti, juruteknik, status, notes, dateend };
+            showNotification('✓ Permohonan dikemaskini.', 'success');
         }
     } else {
         const newReq = {
             id: requestIdCounter++,
             requester,
+            model,
+            jenama,
+            nosiri,
             itemRequested,
-            quantity,
+            nosiriganti,
+            dateend,
             status,
             notes,
             date: new Date().toLocaleDateString('id-ID')
@@ -387,10 +401,17 @@ function displayRequests() {
         <tr data-req-id="${r.id}">
             <td>${idx + 1}</td>
             <td>${r.requester}</td>
+            <td>${r.model}</td>
+            <td>${r.jenama}</td>
+            <td>${r.nosiri}</td>
             <td>${r.itemRequested}</td>
+            <td>${r.nosiriganti}</td>
             <td>${r.quantity}</td>
+            <td>${r.status}</td>
+            <td>${r.juruteknik}</td>
             <td>${r.notes}</td>
             <td>${r.date}</td>
+            <td>${r.dateend}</td>
             <td>
                 <div class="action-buttons">
                     <button class="btn btn-edit" onclick="promptEditRequest(${r.id})">✏️</button>
