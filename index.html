@@ -22,22 +22,24 @@
                 <button class="burger-btn" aria-label="Toggle menu">☰</button>
                 <ul class="nav-menu">
                     <li><a href="#dashboard" class="nav-link active">Dashboard</a></li>
-                    <li><a href="#requests" class="nav-link">Permohonan</a></li>
+                    <li><a href="#requests" class="nav-link">Permohonan User</a></li>
+                    <li><a href="#equipment-list" class="nav-link">Senarai Alat Ganti</a></li>
                     <li><a href="#inventory" class="nav-link">SenaraiKomputer</a></li>
-                    <li><a href="#add-item" class="nav-link">Tambah Item</a></li>
                     <li><a href="#reports" class="nav-link">Laporan</a></li>
                     <li><a href="#usage" class="nav-link">usage</a></li>
                     <li><a href="#budget" class="nav-link">budget</a></li>
+                    <li><a href="#contohkira" class="nav-link">contohkira</a></li>
                 </ul>
                 <!-- Burger list inside nav-inner for proper positioning -->
                 <ul class="burger-list" id="burgerList" aria-hidden="true">  
                     <li><a href="#dashboard" class="burger-link">Dashboard</a></li>
-                    <li><a href="#requests" class="burger-link">Permohonan</a></li>
-                    <li><a href="#equipment-list" class="burger-link">Permohonan Alat Ganti</a></li>
+                    <li><a href="#requests" class="burger-link">Permohonan User</a></li>
+                    <li><a href="#equipment-list" class="burger-link">Senarai Alat Ganti</a></li>
                     <li><a href="#inventory" class="burger-link">Senarai Komputer</a></li>
                     <li><a href="#reports" class="burger-link">Laporan</a></li>
                     <li><a href="#usage" class="burger-link">usage</a></li>
                     <li><a href="#budget" class="burger-link">budget</a></li>
+                    <li><a href="#contohkira" class="burger-link">contohkira</a></li>
                 </ul>
             </div>
         </nav>
@@ -47,6 +49,7 @@
             <!-- Dashboard Section -->
             <section id="dashboard" class="section">
                 <h2>Dashboard Permohonan User</h2> <!-- Dashboard yang Connected ke Form Permohonan ---->
+                
                 <!-- Ringkasan Statistik -->
                 <div class="stats-grid">
                     <div class="stat-card">
@@ -83,7 +86,7 @@
                     </div>
                 </div> <!-- End statistik ringkasan -->
 
-                <h2>ALAT GANTI</h2> 
+                <h2>ALAT GANTI senarai komputer</h2> 
                 <!-- statistik Alat Ganti -->
                 <div class="stats-grid">
                     <div class="stat-card">
@@ -110,17 +113,42 @@
                             <span class="stat-label">Jumlah baki keseluruhan Item</span>
                         </div>
                     </div>
+                </div>
+
+                <h2>ALAT GANTI 1</h2> 
+                <!-- statistik Alat Ganti -->
+                <div class="stats-grid">
                     <div class="stat-card">
-                        <div class="stat-icon" style="background: #e74c3c;">🗑️</div>
+                        <div class="stat-icon" style="background: #3498db;">📦</div>
                         <div class="stat-content">
-                            <h3>Rusak/Diperbaiki</h3>
-                            <p class="stat-value" id="damageItems">0</p>
-                            <span class="stat-label">Sedang diperbaiki</span>
+                            <h3>Jumlah Asal Alat Ganti</h3>
+                            <p class="stat-value" id="totalItems">0</p>
+                            <span class="stat-label">Peralatan Sedia Ada</span>
                         </div>
-                    </div>                </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: #2ecc71;">✓</div>
+                        <div class="stat-content">
+                            <h3>Jumlah Digunakan</h3>
+                            <p class="stat-value" id="availableItems">0</p>
+                            <span class="stat-label">Telah Digunakan</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: #f39c12;">⚠️</div>
+                        <div class="stat-content">
+                            <h3>Jumlah Baki</h3>
+                            <p class="stat-value" id="lowStockItems">0</p>
+                            <span class="stat-label">Jumlah baki keseluruhan Item</span>
+                        </div>
+                    </div>
+                </div>
             </section>
 
-            <!-- Permohonan Section tiada nampak ? di dashboard ini senarai alat ganti -->
+            <!----------------------------------------------------------------------------- -->
+            <!-------------------- BAHAGIAN PERMOHONAN ALAT GANTI (USER) --------------------->
+            <!------------------------AKAN DIPAPARKAN PADA DASHBOARD PERMOHONAN USER--------->
+            <!----------------------------------------------------------------------------- -->
             <section id="requests" class="section">
                 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
                     <div>
@@ -165,16 +193,28 @@
                     <form id="addRequestForm" class="form-container">
                         <div class="form-row">
                             <div class="form-group">
-                                <label for="reqRequester">Nama Pengadu</label> <!--// reqRequester gantikan kepada reqCUst-->
-                                <input type="text" id="reqRequester" required placeholder="Nama pengadu"> <!-- nama pengadu-->
+                                <label for="reqCust">Nama Pengadu</label> <!--// reqRequester gantikan kepada reqCUst-->
+                                <input type="text" id="reqCust" required placeholder="Nama pengadu"> <!-- nama pengadu-->
                             </div>
                             <div class="form-group">
                                 <label for="reqModel">Model Komputer</label> <!--// letakkan reqModel Model Komputer-->
-                                <input type="text" id="reqModel" placeholder="Desktop/Laptop/Bahan Pakai Habis">
+                                <select id="reqModel">
+                                    <option value="">-- Pilih Model --</option>
+                                    <option value="Desktop">Desktop</option>
+                                    <option value="Laptop">Laptop</option>
+                                    <option value="Bahan Pakai Habis">Bahan Pakai Habis</option>
+                                </select>
                             </div>
                             <div class="form-group">
                                 <label for="reqJenama">Jenama Komputer</label> <!--// reqJenama-->
-                                <input type="text" id="reqJenama" placeholder="Jenama Komputer/Alat Pakai Habis">
+                                <select id="reqJenama">
+                                    <option value="">-- Pilih Jenama --</option>
+                                    <option value="Dell OPTIPLEX 9020">Dell Optiplex 9020</option>
+                                    <option value="DELL OPTIPLEX 3046">DELL OPTIPLEX 3046</option>
+                                    <option value="DELL OPTIPLEX 3060">DELL OPTIPLEX 3060</option>
+                                    <option value="DELL LATITUDE 3400">DELL LATITUDE 3400</option>
+                                    <option value="HP PROBOOK 430 G1">HP PROBOOK 430 G1</option>
+                                </select>
                             </div>
                             <div class="form-group">
                                 <label for="reqNoSiri">No Siri Komputer</label> <!--// reqNoSiri-->
@@ -182,7 +222,10 @@
                             </div>
                             <div class="form-group">
                                 <label for="reqRequestItem">Alat Ganti Dipohon</label> <!--reqItem change to reqRequestItem-->
-                                <input type="text" id="reqRequestItem" required placeholder="Alat Ganti Dipohon">
+                                <select id="reqRequestItem">
+                                    <option value="">-- Pilih Item --</option>
+                                    <option value="Hardisk">Hdd</option>
+                                </select>
                             </div>
                             <div class="form-group">
                                 <label for="reqSiriGanti">No Siri Alat Ganti</label> <!--// reqNoSiri-->
@@ -200,17 +243,22 @@
                                 </select>
                             </div>
                             <div class="form-group">
-                                <label for="reqJuruteknik">Nama Juruteknik</label> <!--// reqNoSiri-->
-                                <input type="text" id="reqJuruteknik" placeholder="Juruteknik yang bertanggungjawab">
+                                <label for="reqJuruteknik">Nama Juruteknik</label>
+                                <select id="reqJuruteknik">
+                                    <option value="">-- Pilih Juruteknik --</option>
+                                    <option value="Ikmal">Ikmal</option>
+                                    <option value="Bala">Bala</option>
+                                    <option value="Cici">Cici</option>
+                                </select>
                             </div>
                             <div class="form-group">
                                 <label for="reqDateEnd">Tarikh Selesai</label> <!--// reqDateEnd-muncul selesai butang selesai dipilih auto update date-->
-                                <input type="text" id="reqDateEnd" placeholder="Selesai">
+                                <input type="datetime-local" id="reqDateEnd" placeholder="Selesai">
                             </div>
                         </div>
                         <div class="form-group">
-                            <label for="reqNotes">Catatan</label>
-                            <textarea id="reqNotes" rows="3" placeholder="Catatan (opsional)"></textarea>
+                            <label for="reqcatat">Catatan</label>
+                            <textarea id="reqcatat" rows="7" placeholder="Catatan (opsional)"></textarea>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" id="cancelRequestBtn">Batal</button>
@@ -220,28 +268,30 @@
                 </div>
             </div>
             
-
+            <!------------------------------------------------------------------------------>
+            <!-------------------------BAHAGIAN SENARAI ALAT GANTI ------------------------>
+            <!------------------------------------------------------------------------------>
             <!-- Equipment List Section -->
             <section id="equipment-list" class="section">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
                     <div>
-                        <h2>📦 Permohonan Alat Ganti Peralatan</h2>
-                        <p style="color: #7f8c8d; margin-bottom: 0;">Senarai item alat Ganti komputer .</p>
+                        <h2>📦 Senarai Alat Ganti Table</h2>
+                        <p style="color: #7f8c8d; margin-bottom: 1;">Senarai item alat Ganti komputer .</p>
                     </div>
-                    <button class="btn btn-primary" id="openAddEquipmentForm">➕ Tambah senarai Baru</button>
+                    <button class="btn btn-primary" id="openAddEquipmentForm">➕ Tambah senarai Baru Alat Ganti</button>
                 </div>
-                
+                <!--table list area-->
                 <div class="table-responsive">
-                    <table class="equipment-table" id="equipmentTable">
+                    <table class="equipment-table" id="equipmentTable"> <!--equipmentTable-->
                         <thead>
                             <tr>
                                 <th>#</th>
-                                <th>iCON</th>
                                 <th>Model Komputer</th>
                                 <th>Alat Ganti Dipohon</th>
-                                <th>Kuantiti Dipohon</th>
-                                <th>Status</th>
-                                <th>Aksi</th>
+                                <th>Nama Model</th> <!--Butang-->
+                                <th>Kuantiti Sebenar</th>
+                                <th>Status/catat</th>
+                                <th>Tindakan</th>
                             </tr>
                         </thead>
                         <tbody id="equipmentTableBody">
@@ -254,51 +304,47 @@
                 <div style="margin-top:15px; display:flex; gap:10px; align-items:center;">
                     <input type="file" id="importEquipmentFile" accept=".csv,.xlsx" />
                     <button class="btn btn-secondary" id="importEquipmentBtn">📤 Import (CSV/XLSX)</button>
-                    <small style="color:#7f8c8d;">Format: Kategori,Nama Peralatan,Model,Kuantiti,Ikon,Catatan/Keterangan</small>
+                    <small style="color:#7f8c8d;">Format: Model Komputer, Alat Ganti Dipohon, Kuantiti Sebenar </small>
                 </div>
             </section>
 
-            <!-- Modal Form Tambah Peralatan -->
+            <!-- Modal Form Tambah Peralatan dalam senarai alat ganti -->
             <div id="equipmentModal" class="modal">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h2 id="modalTitle">➕ Tambah Peralatan Baru</h2>
+                        <h2 id="modalTitle">➕ Tambah Alat Ganti Form</h2>
                         <button class="modal-close" id="closeModalBtn">&times;</button>
                     </div>
                     <form id="addEquipmentForm" class="form-container">
                         <div class="form-row">
                             <div class="form-group">
-                                <label for="equipmentCategory">Kategori <span class="required">*</span></label>
-                                <input type="text" id="equipmentCategory" list="categoryList" required placeholder="Ketik atau pilih kategori...">
-                                <datalist id="categoryList">
+                                <label for="komp1">Pilih Model <span class="required">*</span></label>
+                                <select id="komp1">
+                                    <option value="">-- Pilih Model --</option>
                                     <option value="Desktop">Desktop</option>
                                     <option value="Laptop">Laptop</option>
-                                    <option value="Alat Pakai Habis">Alat Pakai Habis</option>
-                                </datalist>
+                                    <option value="Bahan Pakai Habis">Bahan Pakai Habis</option>
+                                </select>
                             </div>
                             <div class="form-group">
-                                <label for="equipmentName">Nama Peralatan <span class="required">*</span></label>
-                                <input type="text" id="equipmentName" required placeholder="Contoh: Motherboard">
+                                <label for="NamaPeralatan">Alat Ganti Dipohon <span class="required">*</span></label> <!--equipmentName ganti kepada NamaPeralatan-->
+                                <input type="text" id="NamaPeralatan" required placeholder="Contoh: Motherboard">
                             </div>
-                            <div class="form-group">
-                                <label for="equipmentModel">Model</label>
-                                <input type="text" id="equipmentModel" placeholder="Contoh: 860 EVO">
-                            </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="equipmentQuantity">Kuantiti</label>
-                                <input type="number" id="equipmentQuantity" min="1" value="1">
-                            </div>
-                            <div class="form-group">
-                                <label for="equipmentIcon">Ikon</label>
-                                <input type="text" id="equipmentIcon" placeholder="Contoh: 📦">
+                            <div class="form-group"> <!--equipmentModel ganti kepada NamaModel  -->
+                                <label for="NamaModel">Nama Model</label>
+                                <input type="text" id="NamaModel" placeholder="Contoh: 860 EVO">
                             </div>
                         </div>
                         <div class="form-row">
-                            <div class="form-group">
-                                <label for="equipmentNotes">Catatan/Keterangan</label>
-                                <textarea id="equipmentNotes" rows="3" placeholder="Catatan tambahan tentang peralatan ini"></textarea>
+                            <div class="form-group"> <!--equipmentQuantity ganti kepada Quantity -->
+                                <label for="EQuantity">Kuantiti</label>
+                                <input type="number" id="EQuantity" min="1" value="1">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group"> <!--equipmentNotes ganti kepada Catatan1 -->
+                                <label for="CatitAlatGSanti">Catatan/Keterangan</label>
+                                <textarea id="CatitAlatGanti" rows="3" placeholder="Catatan tambahan tentang peralatan ini"></textarea>
                             </div>
                         </div>
                         <div class="modal-footer">
@@ -308,6 +354,7 @@
                     </form>
                 </div>
             </div>
+
 
             <!-- Add Item delete Section //IVENTORI .. Form-->
             <section id="add-item" class="section">
@@ -334,8 +381,8 @@
                 </form>
             </section>
 
-
-            <!-- Inventory Section -->
+            <!--lain seksyen-->
+            <!-- Inventory Section Senarai Komputer tukarkan kedudukan kepada senarai alat ganti-->
             <section id="inventory" class="section">
                 <div style="display:flex;justify-content:space-between;align-items:center;">
                     <h2 style="margin:0">Senarai Komputer</h2>
@@ -466,6 +513,64 @@
                     <button class="btn btn-secondary" id="printBtn">🖨️ Cetak Laporan</button>
                 </div>
             </section>
+
+<!------------------------------------------------------------------------------------------------------------------------->
+
+            <!-- ContohKira -->
+           <section id="contohkira" class="section">
+            <h2>📊 Dashboard Stok</h2>
+
+             <!-- CARDS total-->
+             <div id="stokCards" class="cards"></div>
+             <div class="card total">
+                
+            <h3>Jumlah Keseluruhan</h3>
+                 <p id="jumlahKeseluruhan">0</p>
+            </div>
+
+
+
+        <!---------area table dan form    -->
+
+             <!-- FORM -->
+ 
+            <form id="stokForm">
+                 <input type="text" id="item" placeholder="Nama Item" required>
+                 <input type="number" id="kuantiti" placeholder="Kuantiti" required>
+                 <button type="submit">Tambah</button>
+              </form>
+            <p></p>
+
+
+            
+          <!-- TABLE -->
+           <div class=""table-responsive">
+             <table class="inventory-table"id="contohkira">
+             <thead>
+               <tr>
+                 <th>Item</th>
+                 <th>Jumlah</th>
+               </tr>
+
+           </thead>
+           <tbody id="stokTable"></tbody>
+                <tr class=""empty-row"><td colspan="2" class="text-center">Tiada data stok.</td></tr>
+            </tbody>
+            </table>
+            </div>
+            </section>
+
+<!---------------------------dashboard contoh kira-------------------->
+
+
+
+
+
+
+
+
+
+
         </main>
 
         <!-- Footer -->

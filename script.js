@@ -12,6 +12,9 @@ let budgetUsed = 0;
 window.addEventListener('DOMContentLoaded', () => {
     loadDataFromStorage();
     updateDashboard();
+    // Inventory
+    displayInventory();
+    // Event listeners
     setupEventListeners();
     setupEquipmentListeners();
     // Requests and import
@@ -50,7 +53,7 @@ function setupEquipmentListeners() {
         modal.classList.remove('show');
         document.body.style.overflow = 'auto';
         form.reset();
-        document.getElementById('equipmentQuantity').value = '1';
+        document.getElementById('EQuantity').value = '1';
         document.getElementById('modalTitle').textContent = '➕ Tambah Peralatan Baru';
         delete form.dataset.editingId;
     };
@@ -120,7 +123,8 @@ function setupRequestModalListeners() {
     }
 }
 
-// Handle Add Equipment
+
+// Handle Add Equipment - ada sambungan ke section senarai alat ganti form edit add dan table
 function handleAddEquipment(e) {
     e.preventDefault();
 
@@ -128,12 +132,12 @@ function handleAddEquipment(e) {
     const editingId = form.dataset.editingId ? parseInt(form.dataset.editingId) : null;
 
     const equipmentData = {
-        name: document.getElementById('equipmentCategory').value.trim(),
-        category: document.getElementById('equipmentName').value,
-        model: document.getElementById('equipmentModel').value.trim(),
-        quantity: parseInt(document.getElementById('equipmentQuantity').value),
-        icon: document.getElementById('equipmentIcon').value.trim() || '📦',
-        notes: document.getElementById('equipmentNotes').value.trim(),
+        name: document.getElementById('komp1').value.trim(),
+        category: document.getElementById('NamaPeralatan').value,
+        model: document.getElementById('NamaModel').value.trim(),
+        quantity: parseInt(document.getElementById('EQuantity').value),      
+        notaganti: document.getElementById('CatitAlatGanti').value.trim(),
+        namamodell: document.getElementById('NamaModel').value,
         dateAdded: new Date().toLocaleDateString('id-ID')
     };
 
@@ -154,7 +158,7 @@ function handleAddEquipment(e) {
             ...equipmentData
         };
         equipment.push(newEquipment);
-        showNotification('✓ Peralatan berhasil ditambahkan!', 'success');
+        showNotification('✓ Selesai!! Peralatan berhasil ditambahkan!', 'success');
     }
 
     saveDataToStorage();
@@ -169,7 +173,7 @@ function handleAddEquipment(e) {
     
     // Reset form
     form.reset();
-    document.getElementById('equipmentQuantity').value = '1';
+    document.getElementById('EQuantity').value = '1';
     document.getElementById('modalTitle').textContent = '➕ Tambah Peralatan Baru';
     delete form.dataset.editingId;
     
@@ -178,6 +182,7 @@ function handleAddEquipment(e) {
 }
 
 // Import equipment from CSV (simple parser)_Digunakan untuk upload file ke dalam senarai alat ganti
+// ni dalam grup senarai alat ganti
 function importEquipmentCSV(file) {
     if (!file) {
         showNotification('⚠️ Pilih fail CSV terlebih dahulu.', 'warning');
@@ -198,7 +203,7 @@ function importEquipmentCSV(file) {
                 name: row[0] || 'Unknown',
                 category: row[1] || 'General',
                 quantity: parseInt(row[2]) || 1,
-                icon: row[3] || '📦',
+                iconn: row[3] || '📦', //icon -- iconn
                 condition: row[4] || 'Baik',
                 model: row[5] || '',
                 location: row[6] || '',
@@ -217,6 +222,7 @@ function importEquipmentCSV(file) {
 }
 
 // Unified import handler: CSV or XLSX
+// ni pun dalam grop senarai alat ganrti
 function importEquipmentFile(file) {
     if (!file) { showNotification('⚠️ Pilih fail terlebih dahulu.', 'warning'); return; }
     const name = file.name.toLowerCase();
@@ -243,7 +249,7 @@ function importEquipmentFile(file) {
                         name: row[0] || 'Unknown',
                         category: row[1] || 'General',
                         quantity: parseInt(row[2]) || 1,
-                        icon: row[3] || '📦',
+                        gambar: row[3] || '📦', //icon--icon1
                         condition: row[4] || 'Baik',
                         model: row[5] || '',
                         location: row[6] || '',
@@ -315,66 +321,70 @@ function updateCategoryFilters() {
 }
 
 // -----------------------
-// Requests (Permohonan)
+// Requests (Permohonan user)
 // -----------------------
-function addRequest({ requester, itemRequested, status = 'Baru' }) {
+function addRequest({ cust, model, catat, status = 'Baru' }) {
     const newReq = {
         id: requestIdCounter++,
-        requester: requester || 'Unknown',
-        itemRequested: itemRequested || '-',
+        cust: cust || 'Unknown',
         model: model,
         jenama: jenama,
         nosiri: nosiri,
+        Requestitem: Requestitem || '-',
         nosiriganti: nosiriganti,
-        notes: notes,
         status: status,
+        juruteknik: juruteknik,
+        catat: catat,
+        
         date: new Date().toLocaleDateString('id-ID')
     };
     requests.push(newReq);
     saveDataToStorage();
     displayRequests();
     updateDashboard();
-    showNotification('✓ Permohonan berhasil ditambahkan!', 'success');
+    showNotification('✓ Beyul Permohonan berhasil ditambahkan!', 'success');
 }
 
-// Handle add/edit request from modal
+// Handle add/edit request from permohonan alat ganti user form
 function handleAddRequest(e) {
     e.preventDefault();
     const form = document.getElementById('addRequestForm');
     const editingId = form.dataset.editingId ? parseInt(form.dataset.editingId) : null;
-    const requester = document.getElementById('reqRequester').value.trim();
+    const cust = document.getElementById('reqCust').value.trim();
     const model = document.getElementById('reqModel').value.trim();
     const jenama = document.getElementById('reqJenama').value.trim();
     const nosiri = document.getElementById('reqNoSiri').value.trim();
-    const itemRequested = document.getElementById('reqRequestItem').value.trim();
+    const Requestitem = document.getElementById('reqRequestItem').value.trim();
     const nosiriganti = document.getElementById('reqSiriGanti').value.trim();
     const status = document.getElementById('reqStatus').value.trim();
-    const notes = document.getElementById('reqNotes').value.trim();
+    const catat = document.getElementById('reqcatat').value.trim();
     const dateend = document.getElementById('reqDateEnd').value.trim();
     const juruteknik = document.getElementById('reqJuruteknik').value.trim();
 
     if (editingId) {
         const idx = requests.findIndex(r => r.id === editingId);
         if (idx > -1) {
-            requests[idx] = { ...requests[idx], requester, model, jenama, nosiri, itemRequested, nosiriganti, juruteknik, status, notes, dateend };
+            requests[idx] = { ...requests[idx], cust, model, jenama, nosiri, Requestitem, nosiriganti, status, catat, dateend, juruteknik };
             showNotification('✓ Permohonan dikemaskini.', 'success');
         }
-    } else {
+    } else { //table permohonan user punya
         const newReq = {
             id: requestIdCounter++,
-            requester,
+            cust,
             model,
             jenama,
             nosiri,
-            itemRequested,
+            Requestitem,
             nosiriganti,
-            dateend,
             status,
-            notes,
+            juruteknik,
+            catat,
+            dateend,
             date: new Date().toLocaleDateString('id-ID')
+            
         };
         requests.push(newReq);
-        showNotification('✓ Permohonan ditambahkan.', 'success');
+        showNotification('✓ Permohonan User ditambahkan.', 'success');
     }
 
     saveDataToStorage();
@@ -397,19 +407,19 @@ function displayRequests() {
         return;
     }
 
-    tbody.innerHTML = requests.map((r, idx) => `
+    // masih permohonan user
+    tbody.innerHTML = requests.map((r, idx) => `  
         <tr data-req-id="${r.id}">
             <td>${idx + 1}</td>
-            <td>${r.requester}</td>
+            <td>${r.cust}</td>
             <td>${r.model}</td>
             <td>${r.jenama}</td>
             <td>${r.nosiri}</td>
-            <td>${r.itemRequested}</td>
+            <td>${r.Requestitem}</td>
             <td>${r.nosiriganti}</td>
-            <td>${r.quantity}</td>
             <td>${r.status}</td>
             <td>${r.juruteknik}</td>
-            <td>${r.notes}</td>
+            <td>${r.catat}</td>
             <td>${r.date}</td>
             <td>${r.dateend}</td>
             <td>
@@ -423,7 +433,7 @@ function displayRequests() {
 }
 
 // ------------------
-// Usage (Penggunaan)
+// Usage (Penggunaan Item)
 // ------------------
 function displayUsage() {
     const tbody = document.getElementById('usageTableBody');
@@ -533,14 +543,20 @@ function openUsageModal(itemId) {
 function promptEditRequest(id) {
     const r = requests.find(x => x.id === id);
     if (!r) return;
-    // open modal with data for editing
+    // open modal with data for editing permohonan user
     const form = document.getElementById('addRequestForm');
     if (!form) return;
-    document.getElementById('reqRequester').value = r.requester || '';
-    document.getElementById('reqItem').value = r.itemRequested || '';
-    document.getElementById('reqQty').value = r.quantity || 1;
+    document.getElementById('reqCust').value = r.cust || '';
+    document.getElementById('reqModel').value = r.model || '';
+    document.getElementById('reqJenama').value = r.jenama || '';
+    document.getElementById('reqNoSiri').value = r.nosiri || '';
+    document.getElementById('reqRequestItem').value = r.Requestitem || '';
+    document.getElementById('reqSiriGanti').value = r.nosiriganti || '';
     document.getElementById('reqStatus').value = r.status || 'Baru';
-    document.getElementById('reqNotes').value = r.notes || '';
+    document.getElementById('reqcatat').value = r.notes || ''; //reqcatat
+    document.getElementById('reqDateEnd').value = r.dateend || '';
+    document.getElementById('reqJuruteknik').value = r.juruteknik || '';
+    
     form.dataset.editingId = id;
     document.getElementById('requestModal').classList.add('show');
     document.getElementById('requestModalTitle').textContent = '✏️ Edit Permohonan';
@@ -631,8 +647,6 @@ function handleAddItem(e) {
         name: newItem.name,
         category: newItem.category,
         quantity: newItem.quantity || 1,
-        icon: '📦',
-        condition: newItem.condition || 'Baik',
         model: newItem.serialNumber || '',
         location: '',
         notes: newItem.notes || '',
@@ -709,7 +723,7 @@ function deleteItem(id) {
 function editItem(id) {
     const item = inventory.find(item => item.id === id);
     if (item) {
-        document.getElementById('itemName').value = item.name;
+        document.getElementById('itemName').value = item.nama;
         document.getElementById('category').value = item.category;
         document.getElementById('quantity').value = item.quantity;
         document.getElementById('serialNumber').value = item.serialNumber;
@@ -726,17 +740,18 @@ function editItem(id) {
 
 // Update Dashboard Stats
 function updateDashboard() {
+    // bahagian dashboard alat ganti berada di senarai komputer
     const total = inventory.length;
     const available = inventory.filter(item => item.condition !== 'Rusak').length;
     const lowStock = inventory.filter(item => item.quantity <= 2).length;
-    const damage = inventory.filter(item => item.condition === 'Rusak').length;
+    // delete const damage = inventory.filter(item => item.condition === 'Rusak').length;
 
     document.getElementById('totalItems').textContent = total;
     document.getElementById('availableItems').textContent = available;
     document.getElementById('lowStockItems').textContent = lowStock;
-    document.getElementById('damageItems').textContent = damage;
+    // deleted elemtn .. document.getElementById('damageItems').textContent = damage;
 
-    // Requests stats
+    // Requests stats dashboard permohonan user
     const reqNew = requests.filter(r => r.status.toLowerCase() === 'baru').length;
     const reqInProgress = requests.filter(r => r.status.toLowerCase() === 'dalam proses').length;
     const reqDone = requests.filter(r => r.status.toLowerCase() === 'selesai').length;
@@ -988,46 +1003,11 @@ function loadDataFromStorage() {
         initializeSampleData();
     }
 }
-
+//DALAM SENARAI ALAT GANTI TABLE
 // Initialize sample equipment data
 function initializeSampleData() {
     const sampleEquipment = [
-        {
-            id: equipmentIdCounter++,
-            name: 'RAM Kingston 8GB',
-            category: 'Memory',
-            quantity: 5,
-            icon: '🧠',
-            condition: 'Baik',
-            model: 'DDR4 3200MHz',
-            location: 'Rak A-1',
-            notes: 'Stok tersedia untuk pengganti',
-            dateAdded: new Date().toLocaleDateString('id-ID')
-        },
-        {
-            id: equipmentIdCounter++,
-            name: 'SSD Samsung 256GB',
-            category: 'Storage',
-            quantity: 3,
-            icon: '💾',
-            condition: 'Baik',
-            model: 'SSD 860 EVO',
-            location: 'Rak A-2',
-            notes: 'Performa sangat baik',
-            dateAdded: new Date().toLocaleDateString('id-ID')
-        },
-        {
-            id: equipmentIdCounter++,
-            name: 'Power Supply 500W',
-            category: 'Power Supply',
-            quantity: 2,
-            icon: '⚡',
-            condition: 'Baik',
-            model: 'Corsair 500W',
-            location: 'Rak B-1',
-            notes: 'Certified 80 Plus',
-            dateAdded: new Date().toLocaleDateString('id-ID')
-        }
+        
     ];
     
     equipment = sampleEquipment;
@@ -1089,19 +1069,20 @@ function displayEquipmentTable(filteredEquipment = equipment) {
         tableBody.innerHTML = '<tr class="empty-row"><td colspan="7" class="text-center">Belum ada data peralatan. Tambahkan peralatan baru untuk memulai.</td></tr>';
         return;
     }
-    
+    //Colour Senarai alat ganti table dan susunan table
     tableBody.innerHTML = dataToDisplay.map((item, index) => {
-    const statusClass = item.notes === 'Baru' ? 'status-new' : item.notes === 'Rusak' ? 'status-damage' : 'status-good';
-        const badgeColor = item.quantity <= 2 ? '#f31212ff' : '#2ecc71';
+    const statusClass = item.catit === 'Baru' ? 'status-new' : item.catit === 'Rusak' ? 'status-damage' : 'status-good';
+        const badgeColor = item.quantity <= 10 ? '#f31212ff' : '#2ecc71';  //kuantiti sebenar colour
         
         return `
         <tr data-equipment-id="${item.id}">
             <td>${index + 1}</td>
-            <td style="text-align: center; font-size: 1.5rem;">${item.icon}</td>
+            
             <td><strong>${item.name}</strong></td>
             <td>${item.category}</td>
+            <td style="text-align: center; font-size: 1.5rem;">${item.namamodell}</td>
             <td><span class="badge" style="background: ${badgeColor}; color: white; padding: 5px 10px; border-radius: 4px;">${item.quantity}</span></td>
-            <td><span class="status-badge ${statusClass}">${item.condition}</span></td>
+            <td style="text-align: center; font-size: 1.5rem;">${item.notaganti}</td>
             <td>
                 <div class="action-buttons">
                     <button class="btn btn-edit" onclick="editEquipment(${item.id})">✏️ Edit</button>
@@ -1117,12 +1098,12 @@ function editEquipment(equipmentId) {
     const item = equipment.find(e => e.id == equipmentId);
     if (item) {
         // Fill form with equipment data
-        document.getElementById('equipmentCategory').value = item.category || '';
-        document.getElementById('equipmentName').value = item.name || ''; //
-        document.getElementById('equipmentModel').value = item.model || '';
-        document.getElementById('equipmentQuantity').value = item.quantity || 1;
-        document.getElementById('equipmentIcon').value = item.icon || '📦';
-        document.getElementById('equipmentNotes').value = item.notes || '';
+        //connect sama form new dan edit senarai alat ganti
+        document.getElementById('komp1').value = item.name || ''; //ganti equipmentCategory kepada ModelKategori
+        document.getElementById('NamaModel').value = item.namamodell || '';//name ganti kepada namaperalatan
+        document.getElementById('NamaPeralatan').value = item.category || '';
+        document.getElementById('EQuantity').value = item.quantity || 1;
+        document.getElementById('CatitAlatGanti').value = item.notaganti || '';
         
         // Change modal title
         document.getElementById('modalTitle').textContent = '✏️ Edit Peralatan';
@@ -1154,8 +1135,81 @@ function initialize() {
     updateDashboard();
 }
 
+
 // After init, display usage and budget
 displayUsage();
 updateBudgetDisplay();
-
 initialize();
+
+//bahagian contoh kira
+
+function Dashboardtest() {
+  const cardContainer = document.getElementById("stokCards");
+  const tableBody = document.getElementById("stokTable");
+  const totalEl = document.getElementById("jumlahKeseluruhan");
+
+  let total = 0;
+
+  
+
+  // buang card item lama (kekalkan card total)
+  cardContainer.querySelectorAll(".item-card").forEach(card => card.remove());
+  tableBody.innerHTML = "";
+
+  for (const item in stok) {
+    total += stok[item];
+
+    // CARD ITEM
+    const card = document.createElement("div");
+    card.className = "card item-card";
+    card.innerHTML = `
+      <h3>${item}</h3>
+      <p>${stok[item]}</p>
+    `;
+    cardContainer.appendChild(card);
+
+    // TABLE
+    tableBody.innerHTML += `
+      <tr>
+        <td>${item}</td>
+        <td>${stok[item]}</td>
+      </tr>
+    `;
+  }
+
+  // UPDATE TOTAL
+  totalEl.textContent = total;
+}
+
+
+let stok = {};
+
+document.addEventListener("DOMContentLoaded", () => {
+
+  displayUsage();
+  updateBudgetDisplay();
+  initialize();
+
+  document.getElementById("stokForm").addEventListener("submit", function(e) {
+    e.preventDefault();
+
+    const item = document.getElementById("item").value.trim();
+    const qty = parseInt(document.getElementById("kuantiti").value);
+
+    if (!stok[item]) stok[item] = 0;
+    stok[item] += qty;
+
+    Dashboardtest();
+    this.reset();
+  });
+
+});
+
+
+
+
+
+
+
+
+//end of kira 
