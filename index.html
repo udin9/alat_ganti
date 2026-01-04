@@ -518,7 +518,53 @@
 
             <!-- ContohKira -->
            <section id="contohkira" class="section">
-            <h2>📊 Dashboard Stok</h2>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+                    <div>
+                        <h2>📨 Dashboard Stok</h2>
+                        <p style="color:#7f8c8d;margin-bottom:0;">Senarai stok.</p>
+                    </div>
+                    <button class="btn btn-primary" id="openRequestForm">➕ Tambah stok</button>
+                </div>
+
+            <div class="table-responsive">
+                <table class="inventory-table" id="requestsTable">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Item</th>
+                            <th>Jumlah</th>
+                            <th>Tindakan</th>
+                        </tr>
+                    </thead>
+                    <tbody id="requestsTableBody">
+                        <tr class="empty-row"><td colspan="10" class="text-center">Belum stok.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div id="stokForm" class=""modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2 id="requestModalTitle">➕ Tambah Stok</h2>
+                        <button class="modal-close" id="closeRequestModal">&times;</button>
+                    </div>
+                    <form id="addStokForm" class="form-container">
+                        <div class="form-group">
+                            <label for="item">Nama Item</label>
+                            <input type="text" id="item" required placeholder="Nama Item">
+                        
+                        <div class="form-group">
+                            <label for="kuantiti">Nama Item</label>
+                            <input type="text" id="kuantiti" required placeholder="kuantiti">
+
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" id="cancelRequestBtn">Batal</button>
+                            <button type="submit" class="btn btn-primary">💾 Simpan stok</button>
+                        </div>
+                        </form>
+                        </div>
+                        </div>
 
              <!-- CARDS total-->
              <div id="stokCards" class="cards"></div>
@@ -530,18 +576,8 @@
 
 
 
-        <!---------area table dan form    -->
 
-             <!-- FORM -->
- 
-            <form id="stokForm">
-                 <input type="text" id="item" placeholder="Nama Item" required>
-                 <input type="number" id="kuantiti" placeholder="Kuantiti" required>
-                 <button type="submit">Tambah</button>
-              </form>
-            <p></p>
-
-
+            
             
           <!-- TABLE -->
            <div class=""table-responsive">

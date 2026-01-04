@@ -1181,11 +1181,10 @@ function Dashboardtest() {
   totalEl.textContent = total;
 }
 
-
 let stok = {};
 
 document.addEventListener("DOMContentLoaded", () => {
-
+  saveDataToStorage();
   displayUsage();
   updateBudgetDisplay();
   initialize();
