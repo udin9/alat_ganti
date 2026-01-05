@@ -399,6 +399,31 @@ function handleAddRequest(e) {
     delete form.dataset.editingId;
 }
 
+let isEditMode = false;
+
+// ADD
+document.getElementById("requestModalTitle").addEventListener("click", () => {
+    isEditMode = false;
+
+    document.getElementById("requestModalTitle").innerHTML = "➕ Tambah Permohonan";
+    document.getElementById("addRequestForm").reset();
+    document.getElementById("statusGroup").style.display = "none";
+});
+
+// EDIT
+function openEditForm(data) {
+    isEditMode = true;
+
+    document.getElementById("requestModalTitle").innerHTML = "✏️ Edit Permohonan";
+    document.getElementById("statusGroup").style.display = "block";
+
+    document.getElementById("reqCust").value = data.reqCust;
+    document.getElementById("reqStatus").value = data.reqStatus;
+}
+
+
+
+
 function displayRequests() {
     const tbody = document.getElementById('requestsTableBody');
     if (!tbody) return;
