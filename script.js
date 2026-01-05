@@ -1184,23 +1184,51 @@ function Dashboardtest() {
 let stok = {};
 
 document.addEventListener("DOMContentLoaded", () => {
-  saveDataToStorage();
-  displayUsage();
-  updateBudgetDisplay();
-  initialize();
+ 
+ // BUKA MODAL
+document.getElementById("openRequestForm1").addEventListener("click", () => {
+  document.getElementById("stokForm").style.display = "flex";
+});
 
-  document.getElementById("stokForm").addEventListener("submit", function(e) {
+// TUTUP MODAL
+document.getElementById("closeRequestModal1").addEventListener("click", () => {
+  document.getElementById("stokForm").style.display = "none";
+});
+
+document.getElementById("cancelRequestBtn1").addEventListener("click", () => {
+  document.getElementById("stokForm").style.display = "none";
+});
+
+
+// submit form tambah stok
+  document.getElementById("tambahstok").addEventListener("submit", function(e) {
     e.preventDefault();
+    console.log("SUBMIT FORM DIPANGGIL");
 
     const item = document.getElementById("item").value.trim();
     const qty = parseInt(document.getElementById("kuantiti").value);
+    
+   console.log("ITEM:", item);
+   console.log("QTY:", qty);
 
     if (!stok[item]) stok[item] = 0;
     stok[item] += qty;
 
+    console.log("STOK SEKARANG:", stok)
+    // 🔍 DEBUG DI SINI
+    console.log("STOK:", stok);
+    console.log("SUBMIT DIKLIK");
+    console.log("ITEM:", item, "QTY:", qty);
+
+
     Dashboardtest();
+
     this.reset();
+    document.getElementById("stokForm").style.display = "none";
   });
+
+ 
+
 
 });
 

@@ -273,13 +273,14 @@
             <!------------------------------------------------------------------------------>
             <!-- Equipment List Section -->
             <section id="equipment-list" class="section">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
                     <div>
                         <h2>📦 Senarai Alat Ganti Table</h2>
                         <p style="color: #7f8c8d; margin-bottom: 1;">Senarai item alat Ganti komputer .</p>
                     </div>
                     <button class="btn btn-primary" id="openAddEquipmentForm">➕ Tambah senarai Baru Alat Ganti</button>
                 </div>
+
                 <!--table list area-->
                 <div class="table-responsive">
                     <table class="equipment-table" id="equipmentTable"> <!--equipmentTable-->
@@ -523,11 +524,12 @@
                         <h2>📨 Dashboard Stok</h2>
                         <p style="color:#7f8c8d;margin-bottom:0;">Senarai stok.</p>
                     </div>
-                    <button class="btn btn-primary" id="openRequestForm">➕ Tambah stok</button>
+                    <button class="btn btn-primary" id="openRequestForm1">➕ Tambah stok</button>
                 </div>
 
+               <!---table list  --> 
             <div class="table-responsive">
-                <table class="inventory-table" id="requestsTable">
+                <table class="equipment-table" id="equipmentTable">
                     <thead>
                         <tr>
                             <th>#</th>
@@ -536,35 +538,41 @@
                             <th>Tindakan</th>
                         </tr>
                     </thead>
-                    <tbody id="requestsTableBody">
-                        <tr class="empty-row"><td colspan="10" class="text-center">Belum stok.</td></tr>
+                    <tbody id="equipmentTableBody">
+                        <tr class="empty-row">
+                            <td colspan="7" class="text-center">Belum stok.</td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
+            
 
-            <div id="stokForm" class=""modal">
+            <div id="stokForm" class="modal" style="display:none;">
                 <div class="modal-content">
+
                     <div class="modal-header">
-                        <h2 id="requestModalTitle">➕ Tambah Stok</h2>
-                        <button class="modal-close" id="closeRequestModal">&times;</button>
+                        <h2>➕ Tambah Stok</h2>
+                        <button class="modal-close" id="closeRequestModal1">&times;</button>
                     </div>
-                    <form id="addStokForm" class="form-container">
+
+                    <form id="tambahstok">
                         <div class="form-group">
                             <label for="item">Nama Item</label>
-                            <input type="text" id="item" required placeholder="Nama Item">
+                            <input type="text" id="item" placeholder="Nama Item">
                         
                         <div class="form-group">
                             <label for="kuantiti">Nama Item</label>
-                            <input type="text" id="kuantiti" required placeholder="kuantiti">
+                            <input type="text" id="kuantiti" placeholder="kuantiti">
 
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" id="cancelRequestBtn">Batal</button>
-                            <button type="submit" class="btn btn-primary">💾 Simpan stok</button>
+                            <button type="button" id="cancelRequestBtn1">Batal</button>
+                            <button type="submit" >💾 Simpan stok</button>
                         </div>
-                        </form>
-                        </div>
-                        </div>
+                    </form>
+
+                </div>
+            </div>
 
              <!-- CARDS total-->
              <div id="stokCards" class="cards"></div>
@@ -572,16 +580,11 @@
                 
             <h3>Jumlah Keseluruhan</h3>
                  <p id="jumlahKeseluruhan">0</p>
-            </div>
-
-
-
-
-            
+            </div>    
             
           <!-- TABLE -->
            <div class=""table-responsive">
-             <table class="inventory-table"id="contohkira">
+             <table class="inventory-table"id="Contohkira">
              <thead>
                <tr>
                  <th>Item</th>
@@ -590,7 +593,9 @@
 
            </thead>
            <tbody id="stokTable"></tbody>
-                <tr class=""empty-row"><td colspan="2" class="text-center">Tiada data stok.</td></tr>
+                <tr class="empty-row"><td colspan="2" class="text-center">Tiada data stok.</td></tr>
+                const emptyRow = document.querySelector(".empty-row");
+                if (emptyRow) emptyRow.remove();
             </tbody>
             </table>
             </div>
