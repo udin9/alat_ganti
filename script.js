@@ -2302,16 +2302,16 @@ if (loginForm) {
             sessionStorage.setItem("currentUser", JSON.stringify(foundUser));
 
             // Redirect (index akan urus role)
-            window.location.href = "index.html";
+            window.location.href = "dashboard.html";
 
         }, 1500);
     });
 }
 
 // ===== SESSION CHECK =====
-if (window.location.pathname.endsWith("index.html")) {
+if (window.location.pathname.endsWith("dashboard.html")) {
     if (sessionStorage.getItem("loggedIn") !== "true") {
-        window.location.href = "login.html";
+        window.location.href = "index.html";
     }
 }
 
@@ -2335,7 +2335,7 @@ function resetIdleTimer() {
 
 function startIdleTimer() {
     timeoutReminder = setTimeout(() => { timeoutReminderDiv.style.display = 'block'; }, reminderTime);
-    autoLogout = setTimeout(() => { sessionStorage.removeItem("loggedIn"); window.location.href = "login.html"; }, timeoutLimit);
+    autoLogout = setTimeout(() => { sessionStorage.removeItem("loggedIn"); window.location.href = "index.html"; }, timeoutLimit);
 }
 
 ['mousemove', 'keydown', 'click', 'scroll', 'touchstart'].forEach(evt => { document.addEventListener(evt, resetIdleTimer, false); });
@@ -2424,7 +2424,7 @@ if (logoutBtn) {
         confirmDiv.addEventListener('click', (e) => {
             if (e.target && e.target.id === 'confirmLogoutBtn') {
                 sessionStorage.removeItem("loggedIn");
-                window.location.href = "login.html";
+                window.location.href = "index.html";
 
 
             }
