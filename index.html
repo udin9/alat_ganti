@@ -8,6 +8,11 @@
     <link rel="stylesheet" href="style.css">
 </head>
 
+<!-- LOADER OVERLAY -->
+<div id="loadingOverlay">
+    <span class="loader"></span>
+</div>
+
 <body>
     <div class="container">
         <!-- Header -->
@@ -29,6 +34,8 @@
                     <li><a href="#equipment-listPC" class="nav-link">Senarai Komputer</a></li>
                     <li><a href="#budget" class="nav-link">LAPORAN STOK</a></li>
                     <li><a href="#contohkira" class="nav-link">Stok</a></li>
+                    <li><a href="#adminSection" class="nav-link">Settings</a></li>
+
                 </ul>
                 <!-- Burger list inside nav-inner for proper positioning -->
                 <ul class="burger-list" id="burgerList" aria-hidden="true">
@@ -37,11 +44,9 @@
                     <li><a href="#equipment-list" class="burger-link">Senarai Alat Ganti</a></li>
                     <li><a href="#equipment-listPC" class="burger-link">Senarai Komputer</a></li>
                     <li><a href="#budget" class="burger-link">LAPORAN STOK</a></li>
-                    <!--LAPORAN STOK COLLECT DATA DARI SENARAI ALAT GANTI TABLE DAN MEMAPARKAN 
-                    JUMLAH BAGI SETIAP ITEM SAMA SEPERTI DALAM SENARAI 
-                    ALAT GANTI NAMUN TAMBAH JUMLAH PENGGUNAAN DAN BAKI
-                     ITEM DAN LETAKKAN PERATUS PENGGUNAAN-->
                     <li><a href="#contohkira" class="burger-link">Stok</a></li>
+                    <li><a href="#adminSection" class="burger-link">Settings</a></li>
+                    <li><a href="#" id="logoutBtn" class="burger-link">Logout</a></li>
                 </ul>
             </div>
         </nav>
@@ -537,12 +542,29 @@
 
     <!-- Laporan Stok Section -->
     <section id="budget" class="section">
+        <!-- Modal Preview Laporan -->
+        <div id="previewReportModal" class="modal">
+            <div class="modal-content" style="width: 90%; max-width: 1200px; overflow-y: auto; max-height: 90vh;">
+                <div class="modal-header">
+                    <h2>📊 Preview Laporan Stok</h2>
+                    <button class="modal-close" id="closePreviewModal">&times;</button>
+                </div>
+                <div class="modal-body" id="previewReportBody">
+                    <!-- Laporan akan dijana di sini -->
+                </div>
+                <div class="modal-footer" style="text-align: right;">
+                    <button class="btn btn-secondary" id="closePreviewBtn">Tutup</button>
+                    <button class="btn btn-primary" id="printPreviewBtn">🖨️ Cetak Laporan</button>
+                </div>
+            </div>
+        </div>
+
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
             <div>
                 <h2>📊 LAPORAN STOK</h2>
                 <p style="color:#7f8c8d;margin-bottom:0;">Laporan penggunaan dan baki stok alat ganti.</p>
             </div>
-            <div style="display:flex;gap:1px;">
+            <div style="display:flex;gap:10px;">
                 <button class="btn btn-secondary" id="printStockReportBtn">🖨️ Cetak Laporan</button>
                 <button class="btn btn-primary" id="refreshStockReportBtn">🔄 Jana Laporan</button>
             </div>
@@ -551,25 +573,25 @@
         <!-- Summary Cards -->
         <div id="stockSummaryCards"
             style="display:none;margin-bottom:25px;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:15px;">
-            <div class="stat-card" style="background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);">
+            <div class="stat-card" style="background:linear-gradient(135deg,#667eea 0%,#6e4b91 100%);">
                 <div class="stat-icon">📦</div>
                 <div class="stat-info">
-                    <div class="stat-label">Jumlah Item</div>
-                    <div class="stat-value" id="totalItemsCount">0</div>
+                    <div class="stat-label1">Jumlah Item</div>
+                    <div class="stat-value-laporan" id="totalItemsCount">0</div>
                 </div>
             </div>
             <div class="stat-card" style="background:linear-gradient(135deg,#f093fb 0%,#f5576c 100%);">
                 <div class="stat-icon">⚠️</div>
                 <div class="stat-info">
-                    <div class="stat-label">Stok Kritikal (&gt;80%)</div>
-                    <div class="stat-value" id="criticalStockCount">0</div>
+                    <div class="stat-label1">Stok Kritikal (&gt;80%)</div>
+                    <div class="stat-value-laporan" id="criticalStockCount">0</div>
                 </div>
             </div>
             <div class="stat-card" style="background:linear-gradient(135deg,#4facfe 0%,#00f2fe 100%);">
                 <div class="stat-icon">✅</div>
                 <div class="stat-info">
-                    <div class="stat-label">Stok Mencukupi</div>
-                    <div class="stat-value" id="healthyStockCount">0</div>
+                    <div class="stat-label1">Stok Mencukupi</div>
+                    <div class="stat-value-laporan" id="healthyStockCount">0</div>
                 </div>
             </div>
         </div>
@@ -596,6 +618,19 @@
         </div>
     </section>
 
+    <!-- Timeout Reminder Popup -->
+    <div id="timeoutReminder" class="timeout-reminder">
+        ⚠️ Anda akan logout dalam 1 minit kerana tiada aktiviti!
+        <button id="stayLoggedIn" class="btn-stay">Terus Login</button>
+    </div>
+    <!-- Confirm Logout Popup -->
+    <div id="confirmLogout" class="confirm-logout">
+        <p>⚠️ Anda pasti mahu logout?</p>
+        <div class="confirm-buttons">
+            <button id="cancelLogout" class="btn-cancel">Batal</button>
+            <button id="confirmLogoutBtn" class="btn-confirm">Logout</button>
+        </div>
+    </div>
 
     </main>
 
@@ -622,9 +657,50 @@
         </div>
     </div>
 
+    <!---admin page-->
+    <section id="adminSection" class="section admin-section">
+        <h2>🔐 Pengurusan Pengguna</h2>
+
+        <!-- FORM ADD USER -->
+        <div class="admin-card">
+            <h3>➕ Tambah Pengguna</h3>
+            <form id="addUserForm">
+                <input type="text" id="name" placeholder="Nama" required>
+                <input type="email" id="email" placeholder="Email / ID" required>
+
+                <select id="role" required>
+                    <option value="">Pilih Role</option>
+                    <option value="admin">Admin</option>
+                    <option value="user">User</option>
+                </select>
+
+                <input type="password" id="password" placeholder="Kata Laluan" required>
+
+                <button type="submit">Tambah</button>
+            </form>
+        </div>
+
+        <!-- TABLE -->
+        <div class="admin-card">
+            <h3>📋 Senarai Pengguna</h3>
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Nama</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th>Tindakan</th>
+                    </tr>
+                </thead>
+                <tbody id="userTable"></tbody>
+            </table>
+        </div>
+    </section>
+
+
     <!------BAHAGIAN LAPORAN-->
 
-    <!-- Modal for Editable Report Preview -->
+    <!-- Modal for Editable Report Preview dalam permhonan user-->
     <div id="reportPreviewModal" class="modal">
         <div class="modal-content report-preview-content" style="max-width: 900px;">
             <div class="modal-header">
@@ -740,6 +816,8 @@
                 <button type="button" class="btn btn-secondary" id="cancelReportPreview">Batal</button>
             </div>
         </div>
+
+
 
 
         <script src="script.js"></script>

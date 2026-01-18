@@ -387,6 +387,12 @@ function updateCategoryFilters() {
     }
 }
 
+
+
+// Contoh: panggil simulateProcess bila user klik button
+// document.getElementById('addItemBtn').addEventListener('click', simulateProcess);
+
+
 // -----------------------
 // Requests (Permohonan user)
 // -----------------------
@@ -492,7 +498,13 @@ function displayRequests() {
             <td>${r.nosiri}</td>
             <td>${r.Requestitem}</td>
             <td>${r.nosiriganti}</td>
-            <td>${r.status}</td>
+
+            <td>
+                <span class="status-badge ${getStatusClass(r.status)}">
+                    ${r.status}
+                </span>
+            </td>
+
             <td>${r.juruteknik}</td>
             <td>${r.catat}</td>
             <td>${r.date}</td>
@@ -1118,20 +1130,41 @@ function generateReport() {
     const buildTableRows = (items) => {
         let totalQty = 0;
         let totalPrice = 0;
-        const rows = items.map((r, idx) => {
-            const price = getPrice(r.Requestitem);
-            const total = price * 1;
-            totalQty += 1;
-            totalPrice += total;
+
+        // GROUP ikut Item + Jenama (Model Komputer)
+        const grouped = {};
+
+        items.forEach(r => {
+            const key = `${r.Requestitem}||${r.jenama}`;
+
+            if (!grouped[key]) {
+                grouped[key] = {
+                    item: r.Requestitem,
+                    jenama: r.jenama,
+                    qty: 0
+                };
+            }
+
+            grouped[key].qty += 1;
+        });
+
+        // Bina row table
+        const rows = Object.values(grouped).map((g, idx) => {
+            const price = getPrice(g.item);
+            const rowTotal = price * g.qty;
+
+            totalQty += g.qty;
+            totalPrice += rowTotal;
+
             return `
-                <tr>
-                    <td class="text-center">${idx + 1}</td>
-                    <td>${r.Requestitem} (${r.jenama})</td>
-                    <td class="text-center">1</td>
-                    <td class="text-right">RM ${price.toFixed(2)}</td>
-                    <td class="text-right">RM ${total.toFixed(2)}</td>
-                </tr>
-            `;
+            <tr>
+                <td class="text-center">${idx + 1}</td>
+                <td>${g.item} (${g.jenama})</td>
+                <td class="text-center">${g.qty}</td>
+                <td class="text-right">RM ${price.toFixed(2)}</td>
+                <td class="text-right">RM ${rowTotal.toFixed(2)}</td>
+            </tr>
+        `;
         }).join('');
 
         return { rows, totalQty, totalPrice };
@@ -1315,6 +1348,24 @@ function generateReport() {
         setTimeout(window.initResizableLogo, 100);
     }
 }
+
+function getStatusClass(status) {
+    switch (status) {
+        case 'Baru':
+            return 'status-baru';
+        case 'Dalam Proses':
+            return 'status-dalam-proses';
+        case 'Diluluskan':
+            return 'status-diluluskan';
+        case 'Ditolak':
+            return 'status-ditolak';
+        case 'Selesai':
+            return 'status-selesai';
+        default:
+            return '';
+    }
+}
+
 
 
 
@@ -1955,7 +2006,7 @@ function setupConfirmationModalListeners() {
 }
 
 // ==========================================
-// Stock Report Functions
+// Stock Report Functions laporan stok print
 // ==========================================
 
 function generateStockReport() {
@@ -1984,26 +2035,26 @@ function generateStockReport() {
     // Calculate usage from requests - match by "catat" field (Alat Ganti Dipohon)
     // and use Requestitem quantity for accurate usage tracking
     requests.forEach(req => {
-        if (req.catat && req.Requestitem) {
-            // Try to parse Requestitem as a number for quantity, default to 1
-            const quantity = parseInt(req.Requestitem) || 1;
-
-            // Find matching equipment by exact category name match
+        // pastikan ada item dan model
+        if (req.Requestitem && req.model && req.status !== 'Ditolak') {
             Object.keys(stockData).forEach(key => {
                 const [model, category] = key.split('|');
 
-                // Exact match or partial match (case-insensitive)
-                const reqCatatLower = req.catat.toLowerCase().trim();
+                const reqItemLower = req.Requestitem.toLowerCase().trim();
                 const categoryLower = category.toLowerCase().trim();
+                const reqModelLower = req.model.toLowerCase().trim();
+                const modelLower = model.toLowerCase().trim();
 
-                if (reqCatatLower === categoryLower ||
-                    categoryLower.includes(reqCatatLower) ||
-                    reqCatatLower.includes(categoryLower)) {
-                    stockData[key].usage += quantity;
+                // Match item + model komputer, hanya kira yang tidak ditolak
+                if (reqItemLower === categoryLower && reqModelLower === modelLower) {
+                    stockData[key].usage += 1; // tambah 1 setiap permohonan
                 }
             });
         }
     });
+
+
+
 
     // Convert to array and sort
     const reportData = Object.values(stockData).sort((a, b) => {
@@ -2140,7 +2191,7 @@ function printStockReport() {
                     font-weight: bold;
                 }
                 tr:nth-child(even) {
-                    background-color: #f9f9f9;
+                    background-color: #f4e5e5ff;
                 }
                 .footer {
                     margin-top: 30px;
@@ -2205,3 +2256,247 @@ function setupStockReportListeners() {
         printBtn.addEventListener('click', printStockReport);
     }
 }
+
+//login page
+
+// LOGIN FUNCTION
+// ===== LOGIN =====
+// ===== LOGIN =====
+const loginForm = document.getElementById('loginForm');
+const loadingOverlay = document.getElementById('loadingOverlay');
+
+function showLoader() {
+    loadingOverlay.style.display = 'flex';
+}
+
+function hideLoader() {
+    loadingOverlay.style.display = 'none';
+}
+
+if (loginForm) {
+    loginForm.addEventListener('submit', function (e) {
+        e.preventDefault();
+        showLoader();
+
+        setTimeout(() => {
+            hideLoader();
+
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value.trim();
+
+            // Ambil user dari localStorage
+            const users = JSON.parse(localStorage.getItem("users")) || [];
+
+            // Cari user
+            const foundUser = users.find(
+                u => u.id === username && u.password === password
+            );
+
+            if (!foundUser) {
+                alert("❌ Username atau password salah!");
+                return;
+            }
+
+            // SIMPAN SESSION
+            sessionStorage.setItem("loggedIn", "true");
+            sessionStorage.setItem("currentUser", JSON.stringify(foundUser));
+
+            // Redirect (index akan urus role)
+            window.location.href = "index.html";
+
+        }, 1500);
+    });
+}
+
+// ===== SESSION CHECK =====
+if (window.location.pathname.endsWith("index.html")) {
+    if (sessionStorage.getItem("loggedIn") !== "true") {
+        window.location.href = "login.html";
+    }
+}
+
+// ===== AUTO LOGOUT + REMINDER =====
+let timeoutReminder, autoLogout;
+const timeoutLimit = 10 * 60 * 1000; // 10 minit
+const reminderTime = 9 * 60 * 1000;  // 1 minit sebelum logout
+
+// Popup reminder
+const timeoutReminderDiv = document.createElement('div');
+timeoutReminderDiv.style.cssText = 'position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:rgba(26,188,156,0.95);color:#fff;padding:18px 25px;border-radius:12px;font-weight:700;box-shadow:0 0 15px #1abc9c,0 0 25px rgba(26,188,156,0.5);text-align:center;display:none;z-index:9999;';
+timeoutReminderDiv.innerHTML = '⚠️ Anda akan logout dalam 1 minit kerana tiada aktiviti! <button id="stayLoggedIn" style="margin-top:10px;padding:8px 16px;border:none;border-radius:10px;background:#3498db;color:#fff;cursor:pointer;box-shadow:0 5px 15px rgba(0,0,0,0.4);">Terus Login</button>';
+document.body.appendChild(timeoutReminderDiv);
+const stayBtn = document.getElementById('stayLoggedIn');
+
+function resetIdleTimer() {
+    clearTimeout(timeoutReminder); clearTimeout(autoLogout);
+    timeoutReminderDiv.style.display = 'none';
+    startIdleTimer();
+}
+
+function startIdleTimer() {
+    timeoutReminder = setTimeout(() => { timeoutReminderDiv.style.display = 'block'; }, reminderTime);
+    autoLogout = setTimeout(() => { sessionStorage.removeItem("loggedIn"); window.location.href = "login.html"; }, timeoutLimit);
+}
+
+['mousemove', 'keydown', 'click', 'scroll', 'touchstart'].forEach(evt => { document.addEventListener(evt, resetIdleTimer, false); });
+stayBtn.addEventListener('click', () => { timeoutReminderDiv.style.display = 'none'; resetIdleTimer(); });
+startIdleTimer();
+
+// ===== BURGER MENU LOGOUT CONFIRM =====
+const logoutBtn = document.getElementById('logoutBtn');
+
+if (logoutBtn) {
+    logoutBtn.addEventListener('click', e => {
+        e.preventDefault();
+        e.stopPropagation(); // ⬅️ INI FIX UTAMA
+        // Simpan last section / scroll
+        const dashboardState = {
+            scrollY: window.scrollY,
+            lastSection: window.location.hash || '#dashboard'
+        };
+        localStorage.setItem('dashboardState', JSON.stringify(dashboardState));
+
+        // Tambah overlay
+        let overlayDiv = document.createElement('div');
+        overlayDiv.id = "logoutOverlay";
+        overlayDiv.style.display = 'block';
+        document.body.appendChild(overlayDiv);
+
+        // Buat popup confirm logout
+        let confirmDiv = document.createElement('div');
+        confirmDiv.id = "confirmLogoutDiv";
+        confirmDiv.style.cssText = `
+      position:fixed;top:50%;left:50%;
+      transform:translate(-50%,-50%);
+      background:rgba(44,62,80,0.95);
+      color:#fff;
+      padding:25px 35px;
+      border-radius:15px;
+      box-shadow:0 0 20px #3498db,0 0 35px rgba(52,152,219,0.5);
+      text-align:center;
+      z-index:9999;
+    `;
+        confirmDiv.innerHTML = `
+      <p>⚠️ Anda pasti mahu logout?</p>
+      <div style="margin-top:20px;display:flex;justify-content:space-around;gap:15px;">
+        <button id="cancelLogoutBtn" style="
+          padding:10px 20px;
+          border:none;
+          border-radius:12px;
+          background:#7f8c8d;
+          color:#fff;
+          font-weight:bold;
+          cursor:pointer;
+          box-shadow:0 6px 15px rgba(0,0,0,0.4);
+        ">Batal</button>
+        <button id="confirmLogoutBtn" style="
+          padding:10px 20px;
+          border:none;
+          border-radius:12px;
+          background:#e74c3c;
+          color:#fff;
+          font-weight:bold;
+          cursor:pointer;
+          box-shadow:0 6px 15px rgba(0,0,0,0.4),0 0 15px #e74c3c;
+        ">Logout</button>
+      </div>
+    `;
+        document.body.appendChild(confirmDiv);
+
+        const cancelBtn = document.getElementById('cancelLogoutBtn');
+        const confirmBtn = document.getElementById('confirmLogoutBtn');
+
+        // Cancel → remove popup & overlay, restore last section
+        cancelBtn.addEventListener('click', () => {
+            confirmDiv.remove();
+            overlayDiv.remove(); // hilangkan kabur
+            const savedState = JSON.parse(localStorage.getItem('dashboardState'));
+            if (savedState) {
+                window.scrollTo({ top: savedState.scrollY, behavior: 'smooth' });
+                if (savedState.lastSection) {
+                    const sectionEl = document.querySelector(savedState.lastSection);
+                    if (sectionEl) sectionEl.scrollIntoView({ behavior: 'smooth' });
+                }
+            }
+        });
+
+        // Confirm → logout
+        confirmDiv.addEventListener('click', (e) => {
+            if (e.target && e.target.id === 'confirmLogoutBtn') {
+                sessionStorage.removeItem("loggedIn");
+                window.location.href = "login.html";
+
+
+            }
+        });
+    });
+}
+
+let users = JSON.parse(localStorage.getItem("users")) || [];
+
+function renderUsers() {
+    const table = document.getElementById("userTable");
+    if (!table) return;
+
+    table.innerHTML = "";
+
+    users.forEach((u, index) => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+            <td>${u.name || "-"}</td>
+            <td>${u.id}</td>
+            <td>${u.role}</td>
+            <td>
+                <button class="admin-delete" data-index="${index}">Padam</button>
+            </td>
+        `;
+        table.appendChild(tr);
+    });
+}
+
+renderUsers();
+
+const addUserForm = document.getElementById("addUserForm");
+
+if (addUserForm) {
+    addUserForm.addEventListener("submit", e => {
+        e.preventDefault();
+
+        const name = document.getElementById("name").value;
+        const email = document.getElementById("email").value;
+        const role = document.getElementById("role").value;
+        const password = document.getElementById("password").value;
+
+        if (users.some(u => u.id === email)) {
+            alert("User sudah wujud");
+            return;
+        }
+
+        users.push({
+            name,
+            id: email,
+            password,
+            role
+        });
+
+        localStorage.setItem("users", JSON.stringify(users));
+        e.target.reset();
+        renderUsers();
+    });
+}
+
+document.addEventListener("click", e => {
+    if (e.target.classList.contains("admin-delete")) {
+        const index = e.target.dataset.index;
+        if (!confirm("Padam user ini?")) return;
+
+        users.splice(index, 1);
+        localStorage.setItem("users", JSON.stringify(users));
+        renderUsers();
+    }
+});
+
+
+
+
+
