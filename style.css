@@ -1339,6 +1339,7 @@ select:focus {
     display: none;
 }
 
+/* area print */
 @media print {
 
     /* Hide the entire website except the report modal */
@@ -1352,8 +1353,8 @@ select:focus {
         background: white !important;
         padding: 0 !important;
         margin: 0 !important;
-        overflow: visible !important;
         border: none !important;
+        overflow: hidden !important;
     }
 
     .report-preview-content {
@@ -1383,7 +1384,7 @@ select:focus {
         margin: 0 !important;
         width: 100% !important;
         height: auto !important;
-        overflow: visible !important;
+        overflow: hidden !important;
         background: white !important;
         box-shadow: none !important;
         border: none !important;
@@ -1405,6 +1406,25 @@ select:focus {
         margin: 10mm;
     }
 }
+
+/* ===== HIDE SCROLLBAR (GLOBAL) ===== */
+
+/* Chrome, Edge, Safari */
+::-webkit-scrollbar {
+    width: 0px;
+    height: 0px;
+}
+
+/* Firefox */
+html {
+    scrollbar-width: none;
+}
+
+/* IE / Edge lama */
+body {
+    -ms-overflow-style: none;
+}
+
 
 /* Report Styles (Screen and Print) */
 .report-page {
