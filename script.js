@@ -1260,7 +1260,7 @@ function generateReport() {
                         <tr class="report-total-row">
                             <td colspan="2" class="text-right">Jumlah Kuantiti</td>
                             <td class="text-center">${resA.totalQty}</td>
-                            <td></td>
+                            <td colspan="0" class="text-right">Jumlah</td>
                             <td class="text-right">RM ${resA.totalPrice.toFixed(2)}</td>
                         </tr>
                     </tbody>
