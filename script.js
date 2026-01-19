@@ -2258,124 +2258,60 @@ function setupStockReportListeners() {
 }
 
 //login page
-// ===== GET DOM ELEMENTS =====
+
+// LOGIN FUNCTION
+// ===== LOGIN =====
+// ===== LOGIN =====
 const loginForm = document.getElementById('loginForm');
 const loadingOverlay = document.getElementById('loadingOverlay');
-const addUserForm = document.getElementById("addUserForm");
-const userTable = document.getElementById("userTable");
 
-// ===== LOADER =====
-function showLoader() { if (loadingOverlay) loadingOverlay.style.display = 'flex'; }
-function hideLoader() { if (loadingOverlay) loadingOverlay.style.display = 'none'; }
+function showLoader() {
+    loadingOverlay.style.display = 'flex';
+}
 
-// ===== FIREBASE IMPORTS =====
-import { auth, db } from './firebase.js';
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-import { setDoc, doc, getDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+function hideLoader() {
+    loadingOverlay.style.display = 'none';
+}
 
-// ===== LOGIN FIREBASE =====
 if (loginForm) {
-    loginForm.addEventListener("submit", async (e) => {
+    loginForm.addEventListener('submit', function (e) {
         e.preventDefault();
         showLoader();
 
-        const email = document.getElementById("username").value.trim();
-        const pass = document.getElementById("password").value.trim();
-
-        try {
-            const userCred = await signInWithEmailAndPassword(auth, email, pass);
-            const uid = userCred.user.uid;
-
-            const snap = await getDoc(doc(db, "users", uid));
-            if (!snap.exists()) {
-                alert("❌ Role tidak dijumpai");
-                return;
-            }
-
-            const userData = snap.data();
-
-            sessionStorage.setItem("loggedIn", "true");
-            sessionStorage.setItem("currentUser", JSON.stringify({
-                uid,
-                email,
-                role: userData.role,
-                name: userData.name
-            }));
-
-            window.location.href = "dashboard.html";
-
-        } catch (err) {
-            console.error(err);
-            alert("❌ Login gagal");
-        } finally {
+        setTimeout(() => {
             hideLoader();
-        }
+
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value.trim();
+
+            // Ambil user dari localStorage
+            fetch("data/users.json")
+                .then(res => res.json())
+                .then(users => {
+
+                    const foundUser = users.find(
+                        u => u.id === username && u.password === password
+                    );
+
+                    if (!foundUser) {
+                        alert("❌ Username atau password salah!");
+                        return;
+                    }
+
+                    // SIMPAN SESSION (kekalkan logic anda)
+                    sessionStorage.setItem("loggedIn", "true");
+                    sessionStorage.setItem("currentUser", JSON.stringify(foundUser));
+
+                    window.location.href = "dashboard.html";
+                })
+                .catch(() => {
+                    alert("❌ Gagal load data user");
+                });
+
+
+        }, 1500);
     });
 }
-
-// ===== CREATE USER FIREBASE =====
-if (addUserForm) {
-    addUserForm.addEventListener("submit", async (e) => {
-        e.preventDefault();
-        showLoader();
-
-        const name = document.getElementById("name").value.trim();
-        const email = document.getElementById("email").value.trim();
-        const password = document.getElementById("password").value.trim();
-        const role = document.getElementById("role").value;
-
-        if (!name || !email || !password || !role) {
-            alert("Sila lengkapkan semua medan!");
-            hideLoader();
-            return;
-        }
-
-        try {
-            const cred = await createUserWithEmailAndPassword(auth, email, password);
-            await setDoc(doc(db, "users", cred.user.uid), {
-                name,
-                email,
-                role,
-                createdAt: new Date()
-            });
-
-            alert("✅ User berjaya dicipta");
-            e.target.reset();
-            loadUsers();
-
-        } catch (err) {
-            console.error(err);
-            alert("❌ Gagal create user: " + err.message);
-        } finally {
-            hideLoader();
-        }
-    });
-}
-
-// ===== PAPAR SENARAI USER FIRESTORE =====
-async function loadUsers() {
-    if (!userTable) return;
-    userTable.innerHTML = "";
-
-    try {
-        const snapshot = await getDocs(collection(db, "users"));
-        snapshot.forEach(docSnap => {
-            const u = docSnap.data();
-            const tr = document.createElement("tr");
-            tr.innerHTML = `
-        <td>${u.name || "-"}</td>
-        <td>${u.email}</td>
-        <td>${u.role}</td>
-      `;
-            userTable.appendChild(tr);
-        });
-    } catch (err) {
-        console.error("❌ Gagal load user", err);
-    }
-}
-
-// Load users on dashboard
-if (userTable) loadUsers();
 
 // ===== SESSION CHECK =====
 if (window.location.pathname.endsWith("dashboard.html")) {
@@ -2386,88 +2322,87 @@ if (window.location.pathname.endsWith("dashboard.html")) {
 
 // ===== AUTO LOGOUT + REMINDER =====
 let timeoutReminder, autoLogout;
-const timeoutLimit = 10 * 60 * 1000;
-const reminderTime = 9 * 60 * 1000;
+const timeoutLimit = 10 * 60 * 1000; // 10 minit
+const reminderTime = 9 * 60 * 1000;  // 1 minit sebelum logout
 
+// Popup reminder
 const timeoutReminderDiv = document.createElement('div');
-timeoutReminderDiv.style.cssText = `
-  position:fixed;bottom:30px;left:50%;
-  transform:translateX(-50%);
-  background:rgba(26,188,156,0.95);
-  color:#fff;padding:18px 25px;
-  border-radius:12px;font-weight:700;
-  box-shadow:0 0 15px #1abc9c,0 0 25px rgba(26,188,156,0.5);
-  text-align:center;display:none;z-index:9999;
-`;
-timeoutReminderDiv.innerHTML = `
-  ⚠️ Anda akan logout dalam 1 minit kerana tiada aktiviti!
-  <button id="stayLoggedIn" style="
-    margin-top:10px;padding:8px 16px;border:none;border-radius:10px;
-    background:#3498db;color:#fff;cursor:pointer;box-shadow:0 5px 15px rgba(0,0,0,0.4);
-  ">Terus Login</button>
-`;
+timeoutReminderDiv.style.cssText = 'position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:rgba(26,188,156,0.95);color:#fff;padding:18px 25px;border-radius:12px;font-weight:700;box-shadow:0 0 15px #1abc9c,0 0 25px rgba(26,188,156,0.5);text-align:center;display:none;z-index:9999;';
+timeoutReminderDiv.innerHTML = '⚠️ Anda akan logout dalam 1 minit kerana tiada aktiviti! <button id="stayLoggedIn" style="margin-top:10px;padding:8px 16px;border:none;border-radius:10px;background:#3498db;color:#fff;cursor:pointer;box-shadow:0 5px 15px rgba(0,0,0,0.4);">Terus Login</button>';
 document.body.appendChild(timeoutReminderDiv);
 const stayBtn = document.getElementById('stayLoggedIn');
 
 function resetIdleTimer() {
-    clearTimeout(timeoutReminder);
-    clearTimeout(autoLogout);
+    clearTimeout(timeoutReminder); clearTimeout(autoLogout);
     timeoutReminderDiv.style.display = 'none';
     startIdleTimer();
 }
 
 function startIdleTimer() {
     timeoutReminder = setTimeout(() => { timeoutReminderDiv.style.display = 'block'; }, reminderTime);
-    autoLogout = setTimeout(() => {
-        sessionStorage.removeItem("loggedIn");
-        window.location.href = "index.html";
-    }, timeoutLimit);
+    autoLogout = setTimeout(() => { sessionStorage.removeItem("loggedIn"); window.location.href = "index.html"; }, timeoutLimit);
 }
 
-['mousemove', 'keydown', 'click', 'scroll', 'touchstart'].forEach(evt => {
-    document.addEventListener(evt, resetIdleTimer, false);
-});
-if (stayBtn) stayBtn.addEventListener('click', resetIdleTimer);
+['mousemove', 'keydown', 'click', 'scroll', 'touchstart'].forEach(evt => { document.addEventListener(evt, resetIdleTimer, false); });
+stayBtn.addEventListener('click', () => { timeoutReminderDiv.style.display = 'none'; resetIdleTimer(); });
 startIdleTimer();
 
-// ===== LOGOUT CONFIRM =====
+// ===== BURGER MENU LOGOUT CONFIRM =====
 const logoutBtn = document.getElementById('logoutBtn');
+
 if (logoutBtn) {
     logoutBtn.addEventListener('click', e => {
         e.preventDefault();
-        e.stopPropagation();
-
-        const dashboardState = { scrollY: window.scrollY, lastSection: window.location.hash || '#dashboard' };
+        e.stopPropagation(); // ⬅️ INI FIX UTAMA
+        // Simpan last section / scroll
+        const dashboardState = {
+            scrollY: window.scrollY,
+            lastSection: window.location.hash || '#dashboard'
+        };
         localStorage.setItem('dashboardState', JSON.stringify(dashboardState));
 
-        const overlayDiv = document.createElement('div');
+        // Tambah overlay
+        let overlayDiv = document.createElement('div');
         overlayDiv.id = "logoutOverlay";
         overlayDiv.style.display = 'block';
         document.body.appendChild(overlayDiv);
 
-        const confirmDiv = document.createElement('div');
+        // Buat popup confirm logout
+        let confirmDiv = document.createElement('div');
         confirmDiv.id = "confirmLogoutDiv";
         confirmDiv.style.cssText = `
       position:fixed;top:50%;left:50%;
       transform:translate(-50%,-50%);
       background:rgba(44,62,80,0.95);
-      color:#fff;padding:25px 35px;
+      color:#fff;
+      padding:25px 35px;
       border-radius:15px;
       box-shadow:0 0 20px #3498db,0 0 35px rgba(52,152,219,0.5);
-      text-align:center;z-index:9999;
+      text-align:center;
+      z-index:9999;
     `;
         confirmDiv.innerHTML = `
       <p>⚠️ Anda pasti mahu logout?</p>
       <div style="margin-top:20px;display:flex;justify-content:space-around;gap:15px;">
         <button id="cancelLogoutBtn" style="
-          padding:10px 20px;border:none;border-radius:12px;
-          background:#7f8c8d;color:#fff;font-weight:bold;
-          cursor:pointer;box-shadow:0 6px 15px rgba(0,0,0,0.4);
+          padding:10px 20px;
+          border:none;
+          border-radius:12px;
+          background:#7f8c8d;
+          color:#fff;
+          font-weight:bold;
+          cursor:pointer;
+          box-shadow:0 6px 15px rgba(0,0,0,0.4);
         ">Batal</button>
         <button id="confirmLogoutBtn" style="
-          padding:10px 20px;border:none;border-radius:12px;
-          background:#e74c3c;color:#fff;font-weight:bold;
-          cursor:pointer;box-shadow:0 6px 15px rgba(0,0,0,0.4),0 0 15px #e74c3c;
+          padding:10px 20px;
+          border:none;
+          border-radius:12px;
+          background:#e74c3c;
+          color:#fff;
+          font-weight:bold;
+          cursor:pointer;
+          box-shadow:0 6px 15px rgba(0,0,0,0.4),0 0 15px #e74c3c;
         ">Logout</button>
       </div>
     `;
@@ -2476,8 +2411,10 @@ if (logoutBtn) {
         const cancelBtn = document.getElementById('cancelLogoutBtn');
         const confirmBtn = document.getElementById('confirmLogoutBtn');
 
+        // Cancel → remove popup & overlay, restore last section
         cancelBtn.addEventListener('click', () => {
-            confirmDiv.remove(); overlayDiv.remove();
+            confirmDiv.remove();
+            overlayDiv.remove(); // hilangkan kabur
             const savedState = JSON.parse(localStorage.getItem('dashboardState'));
             if (savedState) {
                 window.scrollTo({ top: savedState.scrollY, behavior: 'smooth' });
@@ -2488,9 +2425,83 @@ if (logoutBtn) {
             }
         });
 
-        confirmBtn.addEventListener('click', () => {
-            sessionStorage.removeItem("loggedIn");
-            window.location.href = "index.html";
+        // Confirm → logout
+        confirmDiv.addEventListener('click', (e) => {
+            if (e.target && e.target.id === 'confirmLogoutBtn') {
+                sessionStorage.removeItem("loggedIn");
+                window.location.href = "index.html";
+
+
+            }
         });
     });
 }
+
+let users = JSON.parse(localStorage.getItem("users")) || [];
+
+function renderUsers() {
+    const table = document.getElementById("userTable");
+    if (!table) return;
+
+    table.innerHTML = "";
+
+    users.forEach((u, index) => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+            <td>${u.name || "-"}</td>
+            <td>${u.id}</td>
+            <td>${u.role}</td>
+            <td>
+                <button class="admin-delete" data-index="${index}">Padam</button>
+            </td>
+        `;
+        table.appendChild(tr);
+    });
+}
+
+renderUsers();
+
+const addUserForm = document.getElementById("addUserForm");
+
+if (addUserForm) {
+    addUserForm.addEventListener("submit", e => {
+        e.preventDefault();
+
+        const name = document.getElementById("name").value;
+        const email = document.getElementById("email").value;
+        const role = document.getElementById("role").value;
+        const password = document.getElementById("password").value;
+
+        if (users.some(u => u.id === email)) {
+            alert("User sudah wujud");
+            return;
+        }
+
+        users.push({
+            name,
+            id: email,
+            password,
+            role
+        });
+
+        localStorage.setItem("users", JSON.stringify(users));
+        e.target.reset();
+        renderUsers();
+    });
+}
+
+document.addEventListener("click", e => {
+    if (e.target.classList.contains("admin-delete")) {
+        const index = e.target.dataset.index;
+        if (!confirm("Padam user ini?")) return;
+
+        users.splice(index, 1);
+        localStorage.setItem("users", JSON.stringify(users));
+        renderUsers();
+    }
+});
+
+
+
+
+
